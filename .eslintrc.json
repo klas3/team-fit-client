@@ -16,8 +16,29 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "global-require": "off",
+    "react/prefer-stateless-function": "off",
+    "react/destructuring-assignment": [2, "always", { "ignoreClassFields": true }],
+    "linebreak-style": ["error", "windows"],
     "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }]
   }
 }
