@@ -13,13 +13,12 @@ import { ActivityIndicator, FAB } from 'react-native-paper';
 import MapFab from '../components/MapFab';
 import {
   defaultMapLocation,
+  googleMapsApiKey,
   mapDeltas,
   markerMovingConfig,
   theme,
   watchPositionConfig,
 } from '../other/constants';
-
-const googleMapsApiKey = 'AIzaSyA1UA0ASHN2gbmlf3zaKutZQdQfDCTFAv8';
 
 const styles = StyleSheet.create({
   main: {
@@ -68,6 +67,7 @@ const Map = () => {
     if (event.nativeEvent.id === 'userMarker' || event.nativeEvent.id === 'teammateMarker') {
       return;
     }
+    setShouldDisplayDirection(false);
     if (event.nativeEvent.id === 'startMarker') {
       setStartPoint(undefined);
       return;
@@ -133,21 +133,21 @@ const Map = () => {
         <MarkerAnimated
           identifier="userMarker"
           coordinate={userLocation}
-          icon={require('../../assets/user-marker.png')}
+          icon={require('../../assets/markers/user-marker.png')}
           title={`${steps}`}
         />
         {startPoint && (
           <Marker
             identifier="startMarker"
             coordinate={startPoint}
-            icon={require('../../assets/start-marker.png')}
+            icon={require('../../assets/markers/start-marker.png')}
           />
         )}
         {endPoint && (
           <Marker
             identifier="endMarker"
             coordinate={endPoint}
-            icon={require('../../assets/end-marker.png')}
+            icon={require('../../assets/markers/end-marker.png')}
           />
         )}
         {waypoints.map((marker, index) => (
@@ -157,7 +157,7 @@ const Map = () => {
             // eslint-disable-next-line
             key={index}
             coordinate={marker}
-            icon={require('../../assets/waypoint-marker.png')}
+            icon={require('../../assets/markers/waypoint-marker.png')}
           />
         ))}
         {shouldDisplayDirection && (
