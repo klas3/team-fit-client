@@ -1,4 +1,9 @@
 import { DefaultTheme } from 'react-native-paper';
+import * as config from '../../env.json';
+
+export const { googleMapsApiKey, serverUrl } = config;
+
+export const jwtStorageKeyName = 'jwt';
 
 export const theme = {
   ...DefaultTheme,
@@ -8,7 +13,11 @@ export const theme = {
     primary: '#f51818',
     accent: '#fa6969',
     inactive: '#5c5c5c',
-    background: '#f9f9fb',
+    backgroundAccent: '#f9f9fb',
+    blue: '#50cfe6',
+    textPrimary: '#24253d',
+    textAccent: '#8f909b',
+    backgroundPrimary: '#f5f5f5',
   },
 };
 
