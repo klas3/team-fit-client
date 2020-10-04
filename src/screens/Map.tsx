@@ -20,18 +20,6 @@ import {
   watchPositionConfig,
 } from '../other/constants';
 
-const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-  },
-  routeFab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 70,
-  },
-});
-
 const userLocation = new AnimatedRegion({
   ...defaultMapLocation,
   ...mapDeltas,
@@ -185,5 +173,17 @@ const Map = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+  },
+  routeFab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 70,
+  },
+});
 
 export default Map;

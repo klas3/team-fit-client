@@ -4,22 +4,6 @@ import { Text, StyleSheet, RefreshControl } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const styles = StyleSheet.create({
-  text: {
-    color: 'grey',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  textContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-  },
-});
-
 interface IProps {
   onRefresh(): void;
 }
@@ -38,5 +22,21 @@ const ScreenError = (props: IProps) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  text: {
+    color: 'grey',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+  },
+});
 
 export default ScreenError;

@@ -6,34 +6,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getUserInfo, loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
-
-const styles = StyleSheet.create({
-  containter: { flex: 1, alignItems: 'center' },
-  form: {
-    flex: 1,
-    justifyContent: 'center',
-    width: '90%',
-  },
-  actionButton: {
-    margin: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: 'white',
-    textTransform: 'none',
-  },
-  errorText: {
-    color: theme.colors.primary,
-    marginTop: 8,
-    textAlign: 'center',
-    fontSize: 17,
-  },
-  appLogo: {
-    resizeMode: 'stretch',
-    width: '100%',
-    marginBottom: 20,
-  },
-});
+import { Alignments, Images, Spacing, Typography } from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -114,5 +87,16 @@ const Login = (props: IProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  containter: Alignments.centerHorizontal,
+  form: Alignments.centerVerticallyNarrowly,
+  buttonText: Typography.buttonText,
+  errorText: Typography.errorText,
+  appLogo: Images.appLogo,
+  actionButton: {
+    margin: Spacing.small,
+  },
+});
 
 export default Login;

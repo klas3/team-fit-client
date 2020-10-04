@@ -7,47 +7,7 @@ import { theme } from '../other/constants';
 import { changingPasswordSchema } from '../other/validation.schemas';
 import { changePassword } from '../other/api';
 import LoadingSpinner from './LoadingSpinner';
-
-const styles = StyleSheet.create({
-  flexContainer: {
-    flex: 1,
-  },
-  inputsContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  input: {
-    marginTop: 2,
-    marginBottom: 2,
-  },
-  buttonContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  widthContainer: {
-    width: '90%',
-  },
-  button: {
-    marginBottom: 15,
-  },
-  buttonText: {
-    fontSize: 20,
-    textTransform: 'none',
-  },
-  errorText: {
-    color: theme.colors.primary,
-    marginBottom: 5,
-    textAlign: 'center',
-    fontSize: 17,
-  },
-  successText: {
-    color: 'green',
-    marginBottom: 5,
-    textAlign: 'center',
-    fontSize: 17,
-  },
-});
+import { Alignments, Spacing, Typography } from '../styles';
 
 const ChangePassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -131,5 +91,28 @@ const ChangePassword = () => {
     </Formik>
   );
 };
+
+const styles = StyleSheet.create({
+  flexContainer: {
+    flex: 1,
+  },
+  widthContainer: {
+    width: '90%',
+  },
+  errorText: Typography.errorText,
+  buttonText: Typography.buttonText,
+  successText: Typography.successText,
+  inputsContainer: Alignments.centerHorizontal,
+  buttonContainer: {
+    ...Alignments.centerHorizontal,
+    justifyContent: 'flex-end',
+  },
+  input: {
+    margin: Spacing.tiny,
+  },
+  button: {
+    marginBottom: Spacing.base,
+  },
+});
 
 export default ChangePassword;

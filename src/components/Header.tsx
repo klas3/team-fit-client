@@ -4,12 +4,6 @@ import { StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { theme } from '../other/constants';
 
-const styles = StyleSheet.create({
-  main: {
-    backgroundColor: theme.colors.primary,
-  },
-});
-
 interface IProps {
   onGoBack(): void;
   title: string;
@@ -25,5 +19,11 @@ const Header = (props: IProps) => {
     </Appbar.Header>
   );
 };
+
+const styles = StyleSheet.create({
+  main: {
+    backgroundColor: theme.colors.primary,
+  },
+});
 
 export default Header;

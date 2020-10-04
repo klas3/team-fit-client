@@ -14,49 +14,7 @@ import { getUserInfo, logout } from '../other/api';
 import { theme } from '../other/constants';
 import { User } from '../other/entities';
 import ChangePassword from '../components/ChangePassword';
-
-const styles = StyleSheet.create({
-  flexContainer: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  infoContainer: {
-    width: '85%',
-  },
-  label: {
-    fontSize: 25,
-    marginBottom: 10,
-    color: theme.colors.text,
-  },
-  info: {
-    backgroundColor: theme.colors.backgroundPrimary,
-    borderRadius: 10,
-    fontSize: 18,
-    marginBottom: 10,
-    padding: 20,
-  },
-  infoText: {
-    color: theme.colors.textAccent,
-    fontSize: 17,
-  },
-  button: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    textTransform: 'none',
-  },
-  image: {
-    resizeMode: 'stretch',
-    width: '80%',
-    height: '40%',
-  },
-});
+import { Alignments, Images, Spacing, Typography } from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -138,5 +96,29 @@ const Profile = (props: IProps) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  flexContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  infoContainer: {
+    width: '85%',
+  },
+  container: Alignments.centerHorizontal,
+  label: Typography.largeInfoLable,
+  infoText: Typography.infoText,
+  buttonText: Typography.buttonText,
+  image: Images.profileImage,
+  info: {
+    backgroundColor: theme.colors.backgroundPrimary,
+    borderRadius: Spacing.small,
+    marginBottom: Spacing.small,
+    padding: Spacing.large,
+  },
+  button: {
+    margin: Spacing.small,
+  },
+});
 
 export default Profile;
