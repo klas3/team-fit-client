@@ -2,7 +2,7 @@
 import axiosClient, { AxiosInstance } from 'axios';
 import { AsyncStorage } from 'react-native';
 import { jwtStorageKeyName, serverUrl } from './constants';
-import { User } from './entities';
+import { GetResponse, PostResponse, ServerResponse, User } from './entities';
 
 let axios: AxiosInstance;
 
@@ -14,30 +14,25 @@ export async function updateAxiosClient(): Promise<void> {
   });
 }
 
-async function getRequest(endpoint: string): Promise<{} | any[] | undefined> {
+async function makeRequest(
+  method: 'GET' | 'POST',
+  endpoint: string,
+  data?: object,
+): Promise<ServerResponse> {
   try {
-    const response = (await axios.get(endpoint)).data;
-    return !response ? {} : response;
-  } catch {
-    return undefined;
-  }
-}
-
-async function postRequest(endpoint: string, data: {}): Promise<{} | any[] | undefined> {
-  try {
-    const response = (await axios.post(endpoint, data)).data;
-    return !response ? {} : response;
-  } catch {
-    return undefined;
-  }
-}
-
-async function postRequestWithError(endpoint: string, data: {}): Promise<{ error: string }> {
-  try {
-    return { error: (await axios.post(endpoint, data)).data };
+    const responseData = (await axios.request({ method, url: endpoint, data })).data;
+    return { data: responseData };
   } catch (error) {
     return { error: error.response.data.message };
   }
+}
+
+function getRequest(endpoint: string): Promise<GetResponse> {
+  return makeRequest('GET', endpoint);
+}
+
+function postRequest(endpoint: string, data: object): Promise<PostResponse> {
+  return makeRequest('POST', endpoint, data);
 }
 
 export async function logout(): Promise<void> {
@@ -45,36 +40,28 @@ export async function logout(): Promise<void> {
   await updateAxiosClient();
 }
 
-export async function loginToAccount(login: string, password: string): Promise<{} | undefined> {
-  const response = await postRequest('/auth/login', { login, password });
-  if (!response) {
-    return undefined;
+export async function loginToAccount(login: string, password: string): Promise<PostResponse> {
+  const response = await makeRequest('POST', '/auth/login', { login, password });
+  if (!response.error) {
+    const { authToken } = response.data as { authToken: string };
+    await AsyncStorage.setItem(jwtStorageKeyName, authToken);
+    await updateAxiosClient();
   }
-  const { authToken } = response as { authToken: string };
-  await AsyncStorage.setItem(jwtStorageKeyName, authToken);
-  await updateAxiosClient();
-  return {};
+  return response;
 }
 
-export async function register(
-  login: string,
-  password: string,
-  email: string,
-): Promise<{ error: string }> {
-  return postRequestWithError('/auth/register', { login, password, email });
+export function register(login: string, password: string, email: string): Promise<PostResponse> {
+  return postRequest('/auth/register', { login, password, email });
 }
 
 export async function getUserInfo(): Promise<User | undefined> {
   const response = await getRequest('/user/info');
-  if (!response) {
+  if (!response.data) {
     return undefined;
   }
-  return response as User;
+  return response.data as User;
 }
 
-export async function changePassword(
-  oldPassword: string,
-  newPassword: string,
-): Promise<{ error: string }> {
-  return postRequestWithError('/auth/changePassword', { oldPassword, newPassword });
+export function changePassword(oldPassword: string, newPassword: string): Promise<PostResponse> {
+  return postRequest('/auth/changePassword', { oldPassword, newPassword });
 }

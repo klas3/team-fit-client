@@ -47,3 +47,16 @@ export interface Friendship {
   firstUser: User;
   secondUser: User;
 }
+
+export interface ServerResponse {
+  data?: {};
+  error?: string;
+}
+
+export interface GetResponse {
+  data?: object;
+}
+
+export interface PostResponse {
+  error?: string;
+}
