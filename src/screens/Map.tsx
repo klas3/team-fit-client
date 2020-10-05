@@ -9,7 +9,7 @@ import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { Pedometer } from 'expo-sensors';
 import MapViewDirections from 'react-native-maps-directions';
-import { ActivityIndicator, FAB } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import MapFab from '../components/MapFab';
 import {
   defaultMapLocation,
@@ -19,6 +19,8 @@ import {
   theme,
   watchPositionConfig,
 } from '../other/constants';
+import { Spacing } from '../styles';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const userLocation = new AnimatedRegion({
   ...defaultMapLocation,
@@ -106,7 +108,7 @@ const Map = () => {
   }, []);
 
   if (!isReady) {
-    return <ActivityIndicator size={70} style={styles.main} animating />;
+    return <LoadingSpinner />;
   }
   return (
     <View style={styles.main}>
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
   },
   routeFab: {
     position: 'absolute',
-    margin: 16,
+    margin: Spacing.base,
     right: 0,
     bottom: 70,
   },

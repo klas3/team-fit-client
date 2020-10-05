@@ -33,7 +33,7 @@ const Login = (props: IProps) => {
     setIsLoading(true);
     const result = await loginToAccount(login, password);
     setIsLoading(false);
-    if (!result) {
+    if (result.error) {
       setIsErrorOccured(true);
       return;
     }
