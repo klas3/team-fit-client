@@ -7,7 +7,10 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { register } from '../other/api';
 import { theme } from '../other/constants';
 import { registerSchema } from '../other/validation.schemas';
-import { Alignments, Images, Spacing, Typography } from '../styles';
+// prettier-ignore
+import {
+  Alignments, Images, Spacing, Typography,
+} from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -52,25 +55,21 @@ const Register = (props: IProps) => {
           <View style={styles.form}>
             <Image style={styles.appLogo} source={require('../../assets/app-logo.png')} />
             <TextInput
-              mode="outlined"
               label="Email"
               value={formik.values.email}
               onChangeText={formik.handleChange('email')}
             />
             <TextInput
-              mode="outlined"
               label="Login"
               value={formik.values.login}
               onChangeText={formik.handleChange('login')}
             />
             <TextInput
-              mode="outlined"
               label="Password"
               value={formik.values.password}
               onChangeText={formik.handleChange('password')}
             />
             <TextInput
-              mode="outlined"
               label="Confirm password"
               value={formik.values.confirmedPassword}
               onChangeText={formik.handleChange('confirmedPassword')}
@@ -102,7 +101,7 @@ const Register = (props: IProps) => {
 const styles = StyleSheet.create({
   containter: Alignments.centerHorizontal,
   form: Alignments.centerVerticallyNarrowly,
-  buttonText: Typography.buttonText,
+  buttonText: { ...Typography.buttonText, color: 'white' },
   errorText: Typography.errorText,
   appLogo: Images.appLogo,
   actionButton: {

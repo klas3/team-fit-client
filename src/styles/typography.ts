@@ -32,6 +32,5 @@ export const infoText = {
 
 export const buttonText = {
   fontSize: Spacing.large,
-  color: 'white',
   textTransform: 'none' as 'none',
 };

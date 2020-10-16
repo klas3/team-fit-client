@@ -3,6 +3,7 @@ import React from 'react';
 import { Text, StyleSheet, RefreshControl } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alignments, Typography } from '../styles';
 
 interface IProps {
   onRefresh(): void;
@@ -24,16 +25,8 @@ const ScreenError = (props: IProps) => {
 };
 
 const styles = StyleSheet.create({
-  text: {
-    color: 'grey',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  textContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  text: Typography.infoTextCenter,
+  textContainer: Alignments.center,
   container: {
     flex: 1,
   },

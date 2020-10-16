@@ -6,7 +6,10 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getUserInfo, loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
-import { Alignments, Images, Spacing, Typography } from '../styles';
+// prettier-ignore
+import {
+  Alignments, Images, Spacing, Typography,
+} from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -62,8 +65,8 @@ const Login = (props: IProps) => {
     <View style={styles.containter}>
       <View style={styles.form}>
         <Image style={styles.appLogo} source={require('../../assets/app-logo.png')} />
-        <TextInput mode="outlined" label="Login" value={login} onChangeText={setLogin} />
-        <TextInput mode="outlined" label="Password" value={password} onChangeText={setPassword} />
+        <TextInput label="Login" value={login} onChangeText={setLogin} />
+        <TextInput label="Password" value={password} onChangeText={setPassword} />
         <Text style={styles.errorText}>
           {isErrorOccured && "The credentials you've provided was incorrect"}
         </Text>
@@ -91,7 +94,7 @@ const Login = (props: IProps) => {
 const styles = StyleSheet.create({
   containter: Alignments.centerHorizontal,
   form: Alignments.centerVerticallyNarrowly,
-  buttonText: Typography.buttonText,
+  buttonText: { ...Typography.buttonText, color: 'white' },
   errorText: Typography.errorText,
   appLogo: Images.appLogo,
   actionButton: {

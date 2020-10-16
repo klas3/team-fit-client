@@ -14,7 +14,10 @@ import { getUserInfo, logout } from '../other/api';
 import { theme } from '../other/constants';
 import { User } from '../other/entities';
 import ChangePassword from '../components/ChangePassword';
-import { Alignments, Images, Spacing, Typography } from '../styles';
+// prettier-ignore
+import {
+  Alignments, Images, Spacing, Typography,
+} from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -26,17 +29,18 @@ const Profile = (props: IProps) => {
   const [userData, setUserData] = useState<User>();
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { navigation } = props;
 
   const fetchUserData = async () => {
     setIsErrorOccured(false);
     const userInfo = await getUserInfo();
-    setIsLoading(false);
     if (!userInfo) {
       setIsErrorOccured(true);
       return;
     }
+    setIsLoading(false);
     setUserData(userInfo);
   };
 
@@ -47,6 +51,12 @@ const Profile = (props: IProps) => {
   const handleLogout = async () => {
     await logout();
     navigation.navigate('Account');
+  };
+
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchUserData();
+    setIsRefreshing(false);
   };
 
   useEffect(() => {
@@ -65,7 +75,7 @@ const Profile = (props: IProps) => {
     <SafeAreaView style={styles.flexContainer}>
       <ScrollView
         contentContainerStyle={styles.flexContainer}
-        refreshControl={<RefreshControl refreshing={false} onRefresh={fetchUserData} />}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <View style={styles.container}>
           <Image style={styles.image} source={require('../../assets/user-profile.png')} />

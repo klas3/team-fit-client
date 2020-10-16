@@ -37,6 +37,7 @@ const Map = () => {
   const [startPoint, setStartPoint] = useState<LatLng>();
   const [endPoint, setEndPoint] = useState<LatLng>();
   const [waypoints, setWaypoints] = useState<LatLng[]>([]);
+  const [travelCoordinates, setTravelCoordinates] = useState<[number, number][]>([]);
 
   // prettier-ignore
   const onMapLongPress = (event: MapEvent) => {
@@ -99,6 +100,8 @@ const Map = () => {
       setIsReady(true);
       userLocation.timing({ ...userPosition.coords, ...mapDeltas, ...markerMovingConfig }).start();
       Location.watchPositionAsync(watchPositionConfig, (position) => {
+        const { latitude, longitude } = position.coords;
+        setTravelCoordinates(travelCoordinates.concat([[latitude, longitude]]));
         userLocation.timing({ ...position.coords, ...mapDeltas, ...markerMovingConfig }).start();
       });
       Pedometer.watchStepCount((result) => {

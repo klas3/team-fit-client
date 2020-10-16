@@ -2,7 +2,7 @@
 import axiosClient, { AxiosInstance } from 'axios';
 import { AsyncStorage } from 'react-native';
 import { jwtStorageKeyName, serverUrl } from './constants';
-import { GetResponse, PostResponse, ServerResponse, User } from './entities';
+import { GetResponse, PostResponse, ServerResponse, User, Score } from './entities';
 
 let axios: AxiosInstance;
 
@@ -23,7 +23,8 @@ async function makeRequest(
     const responseData = (await axios.request({ method, url: endpoint, data })).data;
     return { data: responseData };
   } catch (error) {
-    return { error: error.response.data.message };
+    const errorMessage = error.response.data.message || error.response.data;
+    return { error: errorMessage };
   }
 }
 
@@ -64,4 +65,12 @@ export async function getUserInfo(): Promise<User | undefined> {
 
 export function changePassword(oldPassword: string, newPassword: string): Promise<PostResponse> {
   return postRequest('/auth/changePassword', { oldPassword, newPassword });
+}
+
+export async function getScores(): Promise<Score[] | undefined> {
+  const response = await getRequest('/user/getScores');
+  if (!response.data) {
+    return undefined;
+  }
+  return response.data as Score[];
 }

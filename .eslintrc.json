@@ -43,7 +43,7 @@
     "no-use-before-define": [
       "error",
       {
-        "variables": "/styles/"
+        "variables": false
       }
     ]
   }

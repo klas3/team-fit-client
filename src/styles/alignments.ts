@@ -12,3 +12,9 @@ export const centerVerticallyNarrowly = {
   ...centerVertically,
   width: '90%',
 };
+
+export const center = {
+  flex: 1,
+  justifyContent: 'center' as 'center',
+  alignItems: 'center' as 'center',
+};

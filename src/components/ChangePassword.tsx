@@ -46,21 +46,18 @@ const ChangePassword = () => {
             <View style={styles.widthContainer}>
               <TextInput
                 style={styles.input}
-                mode="outlined"
                 label="Old password"
                 value={formik.values.oldPassword}
                 onChangeText={formik.handleChange('oldPassword')}
               />
               <TextInput
                 style={styles.input}
-                mode="outlined"
                 label="New password"
                 value={formik.values.newPassword}
                 onChangeText={formik.handleChange('newPassword')}
               />
               <TextInput
                 style={styles.input}
-                mode="outlined"
                 label="Confirm new password"
                 value={formik.values.confirmedNewPassword}
                 onChangeText={formik.handleChange('confirmedNewPassword')}
