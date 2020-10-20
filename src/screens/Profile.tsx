@@ -2,22 +2,26 @@
 import React, { useEffect, useState } from 'react';
 // prettier-ignore
 import {
-  RefreshControl, Text, StyleSheet, View, Image, Modal,
+  Text, StyleSheet, View, Image, Modal,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Button } from 'react-native-paper';
+import { Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
 import Header from '../components/Header';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ScreenError from '../components/ScreenError';
-import { getUserInfo, logout } from '../other/api';
+import { logout, setMarkerColor } from '../other/api';
 import { theme } from '../other/constants';
-import { User } from '../other/entities';
+import { MarkerColors } from '../other/entities';
 import ChangePassword from '../components/ChangePassword';
 // prettier-ignore
 import {
   Alignments, Images, Spacing, Typography,
 } from '../styles';
+import { appLogoImage, userMarkers } from '../other/images';
+import MarkerColorSelector from '../components/MarkerColorSelector';
+import userInfo from '../other/userInfo';
+import { getMarkerColorLiteral } from '../other/library';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -26,68 +30,83 @@ interface IProps {
 
 const Profile = (props: IProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<User>();
   const [isErrorOccured, setIsErrorOccured] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [modalVisibility, setModalVisibility] = useState(false);
+  const [selectorVisibility, setSelectorVisibility] = useState(false);
 
   const { navigation } = props;
 
+  const onSelectorConfirm = async (markerColor: MarkerColors) => {
+    const response = await setMarkerColor(markerColor);
+    if (response.error) {
+      return;
+    }
+    userInfo.markerColor = markerColor;
+    setSelectorVisibility(false);
+  };
+
+  const onSelectorDismiss = () => setSelectorVisibility(false);
+
+  const showSelector = () => setSelectorVisibility(true);
+
   const fetchUserData = async () => {
     setIsErrorOccured(false);
-    const userInfo = await getUserInfo();
-    if (!userInfo) {
+    await userInfo.realoadInfo();
+    if (!userInfo.email) {
       setIsErrorOccured(true);
       return;
     }
     setIsLoading(false);
-    setUserData(userInfo);
   };
 
-  const openModal = () => setShowModal(true);
+  const openModal = () => setModalVisibility(true);
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => setModalVisibility(false);
 
   const handleLogout = async () => {
     await logout();
     navigation.navigate('Account');
   };
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchUserData();
-    setIsRefreshing(false);
-  };
+  const userMarkerIcon = userMarkers[getMarkerColorLiteral(userInfo.markerColor)];
 
   useEffect(() => {
-    (async () => {
-      await fetchUserData();
-    })();
+    (() => fetchUserData())();
   }, []);
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  if (isErrorOccured || !userData) {
+  if (isErrorOccured || !userInfo) {
     return <ScreenError onRefresh={fetchUserData} />;
   }
   return (
     <SafeAreaView style={styles.flexContainer}>
-      <ScrollView
-        contentContainerStyle={styles.flexContainer}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-      >
+      <ScrollView contentContainerStyle={styles.flexContainer}>
         <View style={styles.container}>
-          <Image style={styles.image} source={require('../../assets/user-profile.png')} />
+          <Image source={appLogoImage} />
           <View style={styles.infoContainer}>
-            <Text style={styles.label}>Username</Text>
-            <View style={styles.info}>
-              <Text style={styles.infoText}>{userData.login}</Text>
-            </View>
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.info}>
-              <Text style={styles.infoText}>{userData.email}</Text>
-            </View>
+            <Card style={styles.card}>
+              <Card.Title
+                title="Username"
+                subtitleStyle={styles.subtitle}
+                subtitle={userInfo.login}
+              />
+            </Card>
+            <Card style={styles.card}>
+              <Card.Title title="Email" subtitleStyle={styles.subtitle} subtitle={userInfo.email} />
+            </Card>
+            <Card style={styles.card}>
+              <Card.Title
+                title="Map marker color"
+                subtitle="Change your map marker color to which you like more"
+                subtitleNumberOfLines={2}
+              />
+              <Card.Actions style={styles.cardActions}>
+                <Button onPress={showSelector}>Change</Button>
+                <Image style={styles.mapMarker} source={userMarkerIcon} />
+              </Card.Actions>
+            </Card>
           </View>
           <View style={styles.infoContainer}>
             <Button style={styles.button} mode="contained" onPress={openModal}>
@@ -98,7 +117,12 @@ const Profile = (props: IProps) => {
             </Button>
           </View>
         </View>
-        <Modal animationType="slide" visible={showModal}>
+        <MarkerColorSelector
+          visible={selectorVisibility}
+          onDismiss={onSelectorDismiss}
+          onConfirm={onSelectorConfirm}
+        />
+        <Modal animationType="slide" visible={modalVisibility}>
           <Header title="Changing password" onGoBack={closeModal} />
           <ChangePassword />
         </Modal>
@@ -110,24 +134,38 @@ const Profile = (props: IProps) => {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    backgroundColor: 'white',
   },
   infoContainer: {
     width: '85%',
   },
-  container: Alignments.centerHorizontal,
-  label: Typography.largeInfoLable,
-  infoText: Typography.infoText,
-  buttonText: Typography.buttonText,
-  image: Images.profileImage,
-  info: {
+  cardActions: {
+    justifyContent: 'space-between',
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  card: {
     backgroundColor: theme.colors.backgroundPrimary,
+    paddingTop: Spacing.smallest,
+    paddingBottom: Spacing.smallest,
     borderRadius: Spacing.small,
     marginBottom: Spacing.small,
-    padding: Spacing.large,
   },
+  mapMarker: {
+    ...Images.marker,
+    margin: Spacing.base,
+  },
+  container: {
+    ...Alignments.centerHorizontal,
+    ...Alignments.centerVertically,
+    justifyContent: 'space-around',
+  },
+  infoText: Typography.infoText,
+  buttonText: Typography.buttonText,
   button: {
     margin: Spacing.small,
+  },
+  subtitle: {
+    fontSize: 15,
   },
 });
 

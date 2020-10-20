@@ -9,7 +9,7 @@ import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { Pedometer } from 'expo-sensors';
 import MapViewDirections from 'react-native-maps-directions';
-import { FAB } from 'react-native-paper';
+import { FAB, Snackbar } from 'react-native-paper';
 import MapFab from '../components/MapFab';
 import {
   defaultMapLocation,
@@ -21,6 +21,13 @@ import {
 } from '../other/constants';
 import { Spacing } from '../styles';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Party, PartyInvite } from '../other/entities';
+import partyConnection, { eventEmitter } from '../other/partyConnection';
+import PartyList from '../components/PartyList';
+import { joinParty } from '../other/api';
+import userInfo from '../other/userInfo';
+import { getMarkerColorLiteral } from '../other/library';
+import { userMarkers, routeMarkers } from '../other/images';
 
 const userLocation = new AnimatedRegion({
   ...defaultMapLocation,
@@ -38,6 +45,44 @@ const Map = () => {
   const [endPoint, setEndPoint] = useState<LatLng>();
   const [waypoints, setWaypoints] = useState<LatLng[]>([]);
   const [travelCoordinates, setTravelCoordinates] = useState<[number, number][]>([]);
+  const [modalVisibility, setModalVisibility] = useState(false);
+  const [party, setParty] = useState<Party>(partyConnection.party);
+  const [snackbarText, setSnackbarText] = useState('');
+  const [invitePartyId, setInvitePartyId] = useState('');
+  const [snackbarVisibility, setSnackbarVisibility] = useState(false);
+  const [mapFabVisibility, setMapFabVisibility] = useState(true);
+
+  const userMarker = userMarkers[getMarkerColorLiteral(userInfo.markerColor)];
+
+  const showInvite = (invite: PartyInvite) => {
+    const { partyId, senderLogin } = invite;
+    setSnackbarText(`${senderLogin} has invited you to his party`);
+    setInvitePartyId(partyId);
+    setSnackbarVisibility(true);
+  };
+
+  eventEmitter.addListener('newInvite', showInvite);
+  eventEmitter.addListener('partyChanged', (newParty: Party) => setParty(newParty));
+
+  const getSnackbarAction = () => ({
+    label: 'join',
+    onPress: async () => {
+      await joinParty(invitePartyId);
+      await partyConnection.loadParty();
+    },
+  });
+
+  const hidePartyList = () => {
+    setModalVisibility(false);
+    setMapFabVisibility(true);
+  };
+
+  const showPartyList = () => {
+    setModalVisibility(true);
+    setMapFabVisibility(false);
+  };
+
+  const onDismissSnackbar = () => setSnackbarVisibility(false);
 
   // prettier-ignore
   const onMapLongPress = (event: MapEvent) => {
@@ -107,6 +152,9 @@ const Map = () => {
       Pedometer.watchStepCount((result) => {
         setSteps(result.steps);
       });
+      partyConnection.registerConnection();
+      await partyConnection.loadParty();
+      setParty(partyConnection.party);
     })();
   }, []);
 
@@ -126,22 +174,14 @@ const Map = () => {
         <MarkerAnimated
           identifier="userMarker"
           coordinate={userLocation}
-          icon={require('../../assets/markers/user-marker.png')}
+          icon={userMarker}
           title={`${steps}`}
         />
         {startPoint && (
-          <Marker
-            identifier="startMarker"
-            coordinate={startPoint}
-            icon={require('../../assets/markers/start-marker.png')}
-          />
+          <Marker identifier="startMarker" coordinate={startPoint} icon={routeMarkers.start} />
         )}
         {endPoint && (
-          <Marker
-            identifier="endMarker"
-            coordinate={endPoint}
-            icon={require('../../assets/markers/end-marker.png')}
-          />
+          <Marker identifier="endMarker" coordinate={endPoint} icon={routeMarkers.end} />
         )}
         {waypoints.map((marker, index) => (
           <Marker
@@ -150,7 +190,7 @@ const Map = () => {
             // eslint-disable-next-line
             key={index}
             coordinate={marker}
-            icon={require('../../assets/markers/waypoint-marker.png')}
+            icon={routeMarkers.waypoint}
           />
         ))}
         {shouldDisplayDirection && (
@@ -159,7 +199,7 @@ const Map = () => {
             destination={endPoint}
             waypoints={waypoints}
             apikey={googleMapsApiKey}
-            strokeWidth={5}
+            strokeWidth={Spacing.smallest}
             strokeColor={theme.colors.primary}
           />
         )}
@@ -174,7 +214,21 @@ const Map = () => {
           onPress={onRouteFabPress}
         />
       )}
-      <MapFab setOtherFabsVisibility={setIsRouteFabVisible} dropMapRoute={dropMapRoute} />
+      {party && <PartyList onDismiss={hidePartyList} visibility={modalVisibility} party={party} />}
+      {mapFabVisibility && (
+        <MapFab
+          setOtherFabsVisibility={setIsRouteFabVisible}
+          onDeleteButtonPress={dropMapRoute}
+          onPartyButtonnPress={showPartyList}
+        />
+      )}
+      <Snackbar
+        visible={snackbarVisibility}
+        onDismiss={onDismissSnackbar}
+        action={getSnackbarAction()}
+      >
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };
