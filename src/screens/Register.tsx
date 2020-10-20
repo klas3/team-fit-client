@@ -6,11 +6,9 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { register } from '../other/api';
 import { theme } from '../other/constants';
+import { appLogoImage } from '../other/images';
 import { registerSchema } from '../other/validation.schemas';
-// prettier-ignore
-import {
-  Alignments, Images, Spacing, Typography,
-} from '../styles';
+import { Alignments, Spacing, Typography } from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -53,23 +51,27 @@ const Register = (props: IProps) => {
       >
         {(formik) => (
           <View style={styles.form}>
-            <Image style={styles.appLogo} source={require('../../assets/app-logo.png')} />
+            <Image source={appLogoImage} />
             <TextInput
+              mode="outlined"
               label="Email"
               value={formik.values.email}
               onChangeText={formik.handleChange('email')}
             />
             <TextInput
+              mode="outlined"
               label="Login"
               value={formik.values.login}
               onChangeText={formik.handleChange('login')}
             />
             <TextInput
+              mode="outlined"
               label="Password"
               value={formik.values.password}
               onChangeText={formik.handleChange('password')}
             />
             <TextInput
+              mode="outlined"
               label="Confirm password"
               value={formik.values.confirmedPassword}
               onChangeText={formik.handleChange('confirmedPassword')}
@@ -103,7 +105,6 @@ const styles = StyleSheet.create({
   form: Alignments.centerVerticallyNarrowly,
   buttonText: { ...Typography.buttonText, color: 'white' },
   errorText: Typography.errorText,
-  appLogo: Images.appLogo,
   actionButton: {
     margin: Spacing.large,
   },

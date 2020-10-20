@@ -6,10 +6,8 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getUserInfo, loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
-// prettier-ignore
-import {
-  Alignments, Images, Spacing, Typography,
-} from '../styles';
+import { Alignments, Spacing, Typography } from '../styles';
+import { appLogoImage } from '../other/images';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -64,27 +62,22 @@ const Login = (props: IProps) => {
   return (
     <View style={styles.containter}>
       <View style={styles.form}>
-        <Image style={styles.appLogo} source={require('../../assets/app-logo.png')} />
-        <TextInput label="Login" value={login} onChangeText={setLogin} />
-        <TextInput label="Password" value={password} onChangeText={setPassword} />
+        <Image source={appLogoImage} />
+        <TextInput mode="outlined" label="Login" value={login} onChangeText={setLogin} />
+        <TextInput mode="outlined" label="Password" value={password} onChangeText={setPassword} />
         <Text style={styles.errorText}>
           {isErrorOccured && "The credentials you've provided was incorrect"}
         </Text>
         <Button
           mode="contained"
-          style={styles.actionButton}
+          style={styles.loginButton}
           color={theme.colors.primary}
           onPress={loginUser}
         >
-          <Text style={styles.buttonText}>Log in</Text>
+          <Text style={styles.loginButtonText}>Log in</Text>
         </Button>
-        <Button
-          mode="contained"
-          style={styles.actionButton}
-          color={theme.colors.blue}
-          onPress={navigateToRegister}
-        >
-          <Text style={styles.buttonText}>Register</Text>
+        <Button mode="outlined" style={styles.registerButton} onPress={navigateToRegister}>
+          <Text style={styles.registerButtonText}>Register</Text>
         </Button>
       </View>
     </View>
@@ -94,10 +87,18 @@ const Login = (props: IProps) => {
 const styles = StyleSheet.create({
   containter: Alignments.centerHorizontal,
   form: Alignments.centerVerticallyNarrowly,
-  buttonText: { ...Typography.buttonText, color: 'white' },
+  loginButtonText: { ...Typography.buttonText, color: 'white' },
+  registerButtonText: {
+    ...Typography.buttonText,
+    color: theme.colors.primary,
+  },
+  registerButton: {
+    borderColor: theme.colors.primary,
+    borderWidth: 1,
+    margin: Spacing.small,
+  },
   errorText: Typography.errorText,
-  appLogo: Images.appLogo,
-  actionButton: {
+  loginButton: {
     margin: Spacing.small,
   },
 });

@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { theme } from '../other/constants';
 import { changingPasswordSchema } from '../other/validation.schemas';
 import { changePassword } from '../other/api';
 import LoadingSpinner from './LoadingSpinner';
@@ -46,18 +45,21 @@ const ChangePassword = () => {
             <View style={styles.widthContainer}>
               <TextInput
                 style={styles.input}
+                mode="outlined"
                 label="Old password"
                 value={formik.values.oldPassword}
                 onChangeText={formik.handleChange('oldPassword')}
               />
               <TextInput
                 style={styles.input}
+                mode="outlined"
                 label="New password"
                 value={formik.values.newPassword}
                 onChangeText={formik.handleChange('newPassword')}
               />
               <TextInput
                 style={styles.input}
+                mode="outlined"
                 label="Confirm new password"
                 value={formik.values.confirmedNewPassword}
                 onChangeText={formik.handleChange('confirmedNewPassword')}
