@@ -1,25 +1,21 @@
 // eslint-disable-next-line
-import * as React from 'react';
+import React, { useState } from 'react';
 import { FAB } from 'react-native-paper';
 import { theme } from '../other/constants';
 
-interface IState {
-  open: boolean;
-}
-
 interface IProps {
-  dropMapRoute(): void;
+  onDeleteButtonPress(): void;
   // eslint-disable-next-line no-unused-vars
   setOtherFabsVisibility(visibility: boolean): void;
+  onPartyButtonnPress(): void;
 }
 
 const MapFab = (props: IProps) => {
-  const [state, setState] = React.useState<IState>({ open: false });
+  const [open, setOpen] = useState(false);
 
-  const onStateChange = ({ open }: IState) => setState({ open });
+  const { onDeleteButtonPress, setOtherFabsVisibility, onPartyButtonnPress } = props;
 
-  const { dropMapRoute, setOtherFabsVisibility } = props;
-  const { open } = state;
+  const onStateChange = (state: { open: boolean }) => setOpen(state.open);
 
   const onFabPress = () => {
     if (open) {
@@ -33,12 +29,12 @@ const MapFab = (props: IProps) => {
     {
       icon: 'delete',
       label: 'Drop route',
-      onPress: () => dropMapRoute(),
+      onPress: () => onDeleteButtonPress(),
     },
     {
       icon: 'account-multiple',
-      label: 'Team',
-      onPress: () => undefined,
+      label: 'Party',
+      onPress: () => onPartyButtonnPress(),
     },
   ];
 

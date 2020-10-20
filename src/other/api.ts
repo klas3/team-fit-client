@@ -2,7 +2,10 @@
 import axiosClient, { AxiosInstance } from 'axios';
 import { AsyncStorage } from 'react-native';
 import { jwtStorageKeyName, serverUrl } from './constants';
-import { GetResponse, PostResponse, ServerResponse, User, Score } from './entities';
+// prettier-ignore
+import {
+  GetResponse, PostResponse, ServerResponse, User, Score, Friendship, Party, MarkerColors,
+} from './entities';
 
 let axios: AxiosInstance;
 
@@ -73,4 +76,44 @@ export async function getScores(): Promise<Score[] | undefined> {
     return undefined;
   }
   return response.data as Score[];
+}
+
+export async function getFriendships(): Promise<Friendship[] | undefined> {
+  const response = await getRequest('/friendship/list');
+  if (!response.data) {
+    return undefined;
+  }
+  return response.data as Friendship[];
+}
+
+export function createFriendship(receiverLogin: string): Promise<PostResponse> {
+  return postRequest('/friendship/create', { receiverLogin });
+}
+
+export function acceptFriendship(friendshipId: string): Promise<PostResponse> {
+  return postRequest('/friendship/accept', { friendshipId });
+}
+
+export function deleteFriendship(friendshipId: string): Promise<PostResponse> {
+  return postRequest('/friendship/delete', { friendshipId });
+}
+
+export async function getParty(): Promise<Party | undefined> {
+  const response = await getRequest('/party/info');
+  if (!response.data) {
+    return undefined;
+  }
+  return response.data as Party;
+}
+
+export function joinParty(partyId: string): Promise<PostResponse> {
+  return postRequest('/party/join', { partyId });
+}
+
+export function leaveParty(partyId: string): Promise<PostResponse> {
+  return postRequest('/party/leave', { partyId });
+}
+
+export function setMarkerColor(markerColor: MarkerColors): Promise<PostResponse> {
+  return postRequest('/user/setMarkerColor', { markerColor });
 }

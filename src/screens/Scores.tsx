@@ -13,8 +13,8 @@ import { Score as IScore } from '../other/entities';
 import { getScores } from '../other/api';
 import ScreenError from '../components/ScreenError';
 import Score from '../components/Score';
-import { Alignments, Spacing, Typography } from '../styles';
-import { theme, monthNames } from '../other/constants';
+import { Spacing, Typography } from '../styles';
+import { formatDate } from '../other/library';
 
 const Scores = () => {
   const [scores, setScores] = useState<IScore[]>([]);
@@ -27,6 +27,7 @@ const Scores = () => {
   const loadScores = async () => {
     setIsErrorOccured(false);
     let loadedScores = await getScores();
+    setIsLoading(false);
     if (!loadedScores) {
       setIsErrorOccured(true);
       return;
@@ -41,7 +42,6 @@ const Scores = () => {
     );
     setSearchDate(undefined);
     setScores(loadedScores);
-    setIsLoading(false);
   };
 
   const onRefresh = async () => {
@@ -49,9 +49,6 @@ const Scores = () => {
     await loadScores();
     setIsRefreshing(false);
   };
-
-  // prettier-ignore
-  const formatDate = (date: Date) => `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
   const onDateTimePickerSelect = (event: Event, selectedDate: Date | undefined) => {
     if (!selectedDate) {
@@ -84,6 +81,7 @@ const Scores = () => {
   if (isErrorOccured) {
     return <ScreenError onRefresh={loadScores} />;
   }
+
   const renderScores = scores.map((score, index) => {
     const currentDateWithoutTime = new Date(score.date);
     currentDateWithoutTime.setHours(0, 0, 0, 0);
@@ -94,10 +92,7 @@ const Scores = () => {
         {(!searchDate || searchDate.getTime() === currentDateWithoutTime.getTime()) && (
           <View>
             {(!index || previousDateWithoutTime.getTime() !== currentDateWithoutTime.getTime()) && (
-              <View style={styles.dateContainer}>
-                <Text style={styles.dateText}>{formatDate(currentDateWithoutTime)}</Text>
-                <View style={styles.horizontalLine} />
-              </View>
+              <Text style={styles.dateText}>{formatDate(currentDateWithoutTime)}</Text>
             )}
             <Score score={score} />
           </View>
@@ -105,6 +100,7 @@ const Scores = () => {
       </View>
     );
   });
+
   return (
     <SafeAreaView style={styles.flexContainer}>
       <Searchbar
@@ -130,17 +126,10 @@ const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
   },
-  dateContainer: {
-    ...Alignments.centerHorizontal,
-    marginBottom: Spacing.large,
-    marginTop: Spacing.smaller,
+  dateText: {
+    ...Typography.smallInfoLabel,
+    marginTop: Spacing.small,
   },
-  horizontalLine: {
-    borderBottomColor: theme.colors.textPrimary,
-    borderBottomWidth: 1,
-    width: '90%',
-  },
-  dateText: Typography.smallInfoLabel,
 });
 
 export default Scores;

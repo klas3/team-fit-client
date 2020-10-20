@@ -3,4 +3,7 @@ import * as Typography from './typography';
 import * as Images from './images';
 import * as Alignments from './alignments';
 
-export { Spacing, Typography, Images, Alignments };
+// prettier-ignore
+export {
+  Spacing, Typography, Images, Alignments,
+};

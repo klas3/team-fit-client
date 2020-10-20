@@ -1,13 +1,8 @@
 import { Spacing } from '.';
 
-export const appLogo = {
+// eslint-disable-next-line import/prefer-default-export
+export const marker = {
   resizeMode: 'stretch' as 'stretch',
-  width: '100%',
-  marginBottom: Spacing.large,
-};
-
-export const profileImage = {
-  resizeMode: 'stretch' as 'stretch',
-  width: '80%',
-  height: '40%',
+  width: Spacing.largest,
+  height: Spacing.largest,
 };

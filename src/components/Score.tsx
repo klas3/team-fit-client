@@ -4,27 +4,23 @@ import { Avatar, Card } from 'react-native-paper';
 import { Text, StyleSheet } from 'react-native';
 import { Score as IScore } from '../other/entities';
 import { Spacing, Typography } from '../styles';
+import { getTimeFromDate } from '../other/library';
 
 interface IProps {
   score: IScore;
 }
 
-const Score = (props: IProps) => {
-  // eslint-disable-next-line react/destructuring-assignment
-  const { mileage, date } = props.score;
+const Score = ({ score }: IProps) => {
+  const { mileage, date } = score;
 
-  const getTimeFromDate = (timeDate: Date) => {
-    const hours = timeDate.getHours();
-    const minutes = timeDate.getMinutes();
-    return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-  };
+  const getLeftCardSide = ({ size }: { size: number }) => <Avatar.Icon size={size} icon="run" />;
+
+  const getRightCardSide = () => <Text style={styles.time}>{getTimeFromDate(date)}</Text>;
 
   return (
-    <Card.Title
-      title={`${mileage} km`}
-      left={({ size }) => <Avatar.Icon size={size} icon="run" />}
-      right={() => <Text style={styles.time}>{getTimeFromDate(date)}</Text>}
-    />
+    <Card style={styles.card}>
+      <Card.Title title={`${mileage} km`} left={getLeftCardSide} right={getRightCardSide} />
+    </Card>
   );
 };
 
@@ -32,6 +28,9 @@ const styles = StyleSheet.create({
   time: {
     ...Typography.smallInfoLabel,
     marginRight: Spacing.smaller,
+  },
+  card: {
+    margin: Spacing.tiny,
   },
 });
 

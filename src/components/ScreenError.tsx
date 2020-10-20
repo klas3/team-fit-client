@@ -25,7 +25,7 @@ const ScreenError = (props: IProps) => {
 };
 
 const styles = StyleSheet.create({
-  text: Typography.infoTextCenter,
+  text: Typography.infoText,
   textContainer: Alignments.center,
   container: {
     flex: 1,

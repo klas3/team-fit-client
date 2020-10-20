@@ -7,15 +7,28 @@ import { theme } from '../other/constants';
 interface IProps {
   onGoBack(): void;
   title: string;
+  // eslint-disable-next-line react/require-default-props
+  showActionButton?: boolean;
+  // eslint-disable-next-line react/require-default-props
+  actionButtonIcon?: string;
+  // eslint-disable-next-line react/require-default-props
+  onActionButtonPress?: () => void;
 }
 
 const Header = (props: IProps) => {
-  const { onGoBack, title } = props;
+  const {
+    onGoBack,
+    title,
+    showActionButton = false,
+    actionButtonIcon = '',
+    onActionButtonPress = () => {},
+  } = props;
 
   return (
     <Appbar.Header style={styles.main} statusBarHeight={0}>
       <Appbar.BackAction onPress={onGoBack} />
       <Appbar.Content title={title} />
+      {showActionButton && <Appbar.Action onPress={onActionButtonPress} icon={actionButtonIcon} />}
     </Appbar.Header>
   );
 };
