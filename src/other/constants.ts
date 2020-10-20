@@ -18,6 +18,7 @@ export const theme = {
     textPrimary: '#24253d',
     textAccent: '#8f909b',
     backgroundPrimary: '#f5f5f5',
+    background: '#f2f2f2',
   },
 };
 

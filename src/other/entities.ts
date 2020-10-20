@@ -7,6 +7,7 @@ export interface User {
   lastResetCodeCreationTime?: Date;
   currentLatitude?: number;
   currentLongitude?: number;
+  markerColor: MarkerColors;
   partyId: string;
   // eslint-disable-next-line no-use-before-define
   party: Party;
@@ -44,8 +45,13 @@ export interface Waypoint {
 export interface Friendship {
   id: string;
   isAccepted: boolean;
-  firstUser: User;
-  secondUser: User;
+  initiator: User;
+  receiver: User;
+}
+
+export interface PartyInvite {
+  partyId: string;
+  senderLogin: string;
 }
 
 export interface ServerResponse {
@@ -59,4 +65,17 @@ export interface GetResponse {
 
 export interface PostResponse {
   error?: string;
+}
+
+export enum MarkerColors {
+  'red',
+  'black',
+  'blue',
+  'yellow',
+  'purple',
+  'green',
+  'orange',
+  'pink',
+  'brown',
+  'grey',
 }
