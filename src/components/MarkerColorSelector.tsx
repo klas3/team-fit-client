@@ -5,7 +5,7 @@ import {
   Button, Dialog, Portal, RadioButton,
 } from 'react-native-paper';
 import { MarkerColors } from '../other/entities';
-import userInfo from '../other/userInfo';
+import userInfo from '../services/userInfo';
 import { parsingRadix } from '../other/constants';
 
 interface IProps {

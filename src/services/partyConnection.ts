@@ -1,22 +1,14 @@
-import { AnimatedRegion } from 'react-native-maps';
 import SocketIOClient from 'socket.io-client';
-import { getParty } from './api';
-// prettier-ignore
-import {
-  applicationEvents, defaultMapLocation, mapDeltas, markerMovingConfig, serverUrl,
-} from './constants';
-// prettier-ignore
-import {
-  MarkerColors, Party, PartyInvite, User,
-} from './entities';
+import { getParty } from '../other/api';
+import { applicationEvents, serverUrl } from '../other/constants';
+import { Party, PartyInvite, User } from '../other/entities';
 import userInfo from './userInfo';
+import usersRegions from './usersMarkers';
 
 class PartyConnection {
   public party!: Party;
 
   public inviteId!: string;
-
-  public usersRegions!: AnimatedRegion[];
 
   private socket: SocketIOClient.Socket;
 
@@ -27,14 +19,11 @@ class PartyConnection {
     this.onNewInvite = this.onNewInvite.bind(this);
     this.onRouteChanged = this.onRouteChanged.bind(this);
     this.onUserPositionChanged = this.onUserPositionChanged.bind(this);
-    this.changeUserMarkerColor = this.changeUserMarkerColor.bind(this);
-    this.usersRegions = [];
     this.socket.on('newInvite', this.onNewInvite);
     this.socket.on('userJoin', this.onUserJoin);
     this.socket.on('userLeave', this.onUserLeave);
     this.socket.on('routeChanged', this.onRouteChanged);
     this.socket.on('userPositionChanged', this.onUserPositionChanged);
-    applicationEvents.addListener('markerColorChanged', this.changeUserMarkerColor);
   }
 
   public sendInvite(receiverId: string, senderLogin: string): void {
@@ -66,50 +55,6 @@ class PartyConnection {
       partyId: this.party.id,
       clientUser: { id: userInfo.id, currentLatitude, currentLongitude },
     });
-  }
-
-  public resetPartyMembersMarkers(): void {
-    if (!this.party || !this.party.users) {
-      return;
-    }
-    const regions = this.party.users.map((user) => {
-      const region = new AnimatedRegion({ ...defaultMapLocation, ...mapDeltas });
-      // prettier-ignore
-      region.timing({
-        latitude: user.currentLatitude,
-        longitude: user.currentLongitude,
-        useNativeDriver: false,
-        ...mapDeltas,
-      }).start();
-      return region;
-    });
-    this.usersRegions = regions;
-  }
-
-  public moveUserMarker(userId: string, latitude: number, longitude: number) {
-    if (!this.party || !this.party.users) {
-      return;
-    }
-    const userIndex = this.party.users.findIndex((partyUser) => partyUser.id === userId);
-    if (userIndex === -1) {
-      return;
-    }
-    // prettier-ignore
-    this.usersRegions[userIndex].timing({
-      latitude, longitude, ...mapDeltas, ...markerMovingConfig,
-    }).start();
-  }
-
-  private changeUserMarkerColor(markerColor: MarkerColors): void {
-    if (!this.party || !this.party.users) {
-      return;
-    }
-    const user = this.party.users.find((partyUser) => partyUser.id === userInfo.id);
-    if (!user) {
-      return;
-    }
-    user.markerColor = markerColor;
-    this.emitPartyChanges();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -159,7 +104,7 @@ class PartyConnection {
     }
     foundUser.currentLatitude = currentLatitude;
     foundUser.currentLongitude = currentLongitude;
-    this.moveUserMarker(id, currentLatitude, currentLongitude);
+    usersRegions.moveUserMarker(id, currentLatitude, currentLongitude);
   }
 
   private onRouteChanged(party: Party): void {

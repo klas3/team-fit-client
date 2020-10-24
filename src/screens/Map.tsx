@@ -23,12 +23,13 @@ import {
 import { Spacing } from '../styles';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Party, SnackbarAction } from '../other/entities';
-import partyConnection from '../other/partyConnection';
+import partyConnection from '../services/partyConnection';
 import PartyHub from '../components/PartyHub';
 import { addScore, joinParty, setRoute } from '../other/api';
-import userInfo from '../other/userInfo';
+import userInfo from '../services/userInfo';
 import { getMarkerColorLiteral } from '../other/library';
 import { userMarkers, routeMarkers } from '../other/images';
+import usersMarkers from '../services/usersMarkers';
 
 const Map = () => {
   const [userCoordinates, setUserCoordinates] = useState(defaultMapLocation);
@@ -77,7 +78,7 @@ const Map = () => {
       endPointLatitude,
       endPointLongitude,
     } = newParty;
-    partyConnection.resetPartyMembersMarkers();
+    usersMarkers.resetPartyMembersMarkers();
     if (startPointLatitude && startPointLongitude) {
       setStartPoint({ latitude: startPointLatitude, longitude: startPointLongitude });
     }
@@ -166,7 +167,7 @@ const Map = () => {
   };
 
   useEffect(() => {
-    partyConnection.resetPartyMembersMarkers();
+    usersMarkers.resetPartyMembersMarkers();
     if (Platform.OS === 'android' && !Constants.isDevice) {
       return;
     }
@@ -188,32 +189,30 @@ const Map = () => {
           );
         }
         setPreviousCoordinates({ latitude, longitude });
-        partyConnection.moveUserMarker(userInfo.id, latitude, longitude);
+        usersMarkers.moveUserMarker(userInfo.id, latitude, longitude);
         partyConnection.emitUserLocationChanges(latitude, longitude);
       });
       setIsReady(true);
     })();
   }, []);
 
-  // prettier-ignore
-  const renderedMembersMarkers = partyConnection.party
-    && partyConnection.usersRegions.map((region, index) => {
-      // prettier-ignore
-      const {
-        login, markerColor, currentLatitude, currentLongitude,
-      } = partyConnection.party.users[index];
-      if (currentLatitude === 0 && currentLongitude === 0) {
-        return <View key={login} />;
-      }
-      return (
-        <MarkerAnimated
-          key={login}
-          coordinate={region}
-          icon={userMarkers[getMarkerColorLiteral(markerColor)]}
-          title={login}
-        />
-      );
-    });
+  const renderedMembersMarkers = usersMarkers.usersRegions.map((region, index) => {
+    // prettier-ignore
+    const {
+      login, markerColor, currentLatitude, currentLongitude,
+    } = partyConnection.party.users[index];
+    if (currentLatitude === 0 && currentLongitude === 0) {
+      return <View key={login} />;
+    }
+    return (
+      <MarkerAnimated
+        key={login}
+        coordinate={region}
+        icon={userMarkers[getMarkerColorLiteral(markerColor)]}
+        title={login}
+      />
+    );
+  });
 
   if (!isReady) {
     return <LoadingSpinner />;

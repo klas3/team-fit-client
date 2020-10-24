@@ -19,7 +19,7 @@ import {
 } from '../styles';
 import { appLogoImage, userMarkers } from '../other/images';
 import MarkerColorSelector from '../components/MarkerColorSelector';
-import userInfo from '../other/userInfo';
+import userInfo from '../services/userInfo';
 import { getMarkerColorLiteral } from '../other/library';
 
 interface IProps {

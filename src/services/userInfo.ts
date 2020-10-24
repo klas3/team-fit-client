@@ -1,6 +1,6 @@
-import { getFriendships, getUserInfo, setMarkerColor } from './api';
-import { applicationEvents } from './constants';
-import { Friendship, MarkerColors } from './entities';
+import { getFriendships, getUserInfo, setMarkerColor } from '../other/api';
+import { applicationEvents } from '../other/constants';
+import { Friendship, MarkerColors } from '../other/entities';
 
 class UserInfo {
   public id!: string;

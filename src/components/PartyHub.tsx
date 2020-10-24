@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { leaveParty } from '../other/api';
 import { applicationEvents, theme } from '../other/constants';
 import { Party } from '../other/entities';
-import partyConnection from '../other/partyConnection';
+import partyConnection from '../services/partyConnection';
 import ConfirmationDialog from './ConfirmationDialog';
 import Header from './Header';
 import PartyMember from './PartyMember';

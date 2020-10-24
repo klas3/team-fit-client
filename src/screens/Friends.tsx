@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ScreenError from '../components/ScreenError';
 import { createFriendship } from '../other/api';
 import { Friendship } from '../other/entities';
-import userInfo from '../other/userInfo';
+import userInfo from '../services/userInfo';
 import { Spacing, Typography } from '../styles';
 
 const Friends = () => {
@@ -41,7 +41,6 @@ const Friends = () => {
   const showSnackbar = async (message: string) => {
     setSnackbarText(message);
     setSnackbarVisibility(true);
-    // ! Bad loading friendships
     await loadFriendships();
   };
 

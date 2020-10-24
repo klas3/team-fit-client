@@ -6,8 +6,8 @@ import { User } from '../other/entities';
 import { deleteFriendship, acceptFriendship } from '../other/api';
 import { Spacing } from '../styles';
 import { theme } from '../other/constants';
-import partyConnection from '../other/partyConnection';
-import userInfo from '../other/userInfo';
+import partyConnection from '../services/partyConnection';
+import userInfo from '../services/userInfo';
 import { getMarkerColorLiteral } from '../other/library';
 
 interface IProps {

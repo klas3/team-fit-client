@@ -8,8 +8,8 @@ import { loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
 import { Alignments, Spacing, Typography } from '../styles';
 import { appLogoImage } from '../other/images';
-import userInfo from '../other/userInfo';
-import partyConnection from '../other/partyConnection';
+import userInfo from '../services/userInfo';
+import partyConnection from '../services/partyConnection';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     borderColor: theme.colors.primary,
-    borderWidth: 1,
+    borderWidth: Spacing.hairline,
     margin: Spacing.small,
   },
   errorText: Typography.errorText,
