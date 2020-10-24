@@ -13,7 +13,9 @@ interface IProps {
 const Score = ({ score }: IProps) => {
   const { mileage, date } = score;
 
-  const getLeftCardSide = ({ size }: { size: number }) => <Avatar.Icon size={size} icon="run" />;
+  const getLeftCardSide = (cardProps: { size: number }) => (
+    <Avatar.Icon size={cardProps.size} icon="run" />
+  );
 
   const getRightCardSide = () => <Text style={styles.time}>{getTimeFromDate(date)}</Text>;
 

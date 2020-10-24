@@ -6,6 +6,7 @@ import {
 } from 'react-native-paper';
 import { MarkerColors } from '../other/entities';
 import userInfo from '../other/userInfo';
+import { parsingRadix } from '../other/constants';
 
 interface IProps {
   visible: boolean;
@@ -20,7 +21,7 @@ const MarkerColorSelector = (props: IProps) => {
   const { visible, onConfirm, onDismiss } = props;
 
   const onConfirmbuttonPress = () => {
-    const markerColorNumber = Number.parseInt(markerColor, 10);
+    const markerColorNumber = Number.parseInt(markerColor, parsingRadix);
     if (Number.isNaN(markerColorNumber)) {
       return;
     }

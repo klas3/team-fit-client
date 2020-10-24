@@ -1,10 +1,14 @@
-export const hairline = 1;
-export const tiny = 3;
-export const smallest = 4;
-export const smaller = 8;
-export const small = 12;
-export const base = 16;
-export const large = 20;
-export const larger = 24;
-export const largest = 28;
-export const extraLarge = 50;
+const spacings = {
+  hairline: 1,
+  tiny: 3,
+  smallest: 4,
+  smaller: 8,
+  small: 12,
+  base: 16,
+  large: 20,
+  larger: 24,
+  largest: 28,
+  extraLarge: 50,
+};
+
+export default spacings;

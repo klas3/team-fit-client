@@ -7,9 +7,11 @@ import AccountNavigator from './AccountNavigator';
 
 const Stack = createStackNavigator();
 
+const mainNavigatorScreenOptions = { headerShown: false };
+
 const MainNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={mainNavigatorScreenOptions}>
       <Stack.Screen name="Account" component={AccountNavigator} />
       <Stack.Screen name="Main" component={MenuNavigator} />
     </Stack.Navigator>

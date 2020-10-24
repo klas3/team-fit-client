@@ -86,10 +86,3 @@ export interface SnackbarAction {
   label: string;
   onPress: () => void;
 }
-
-export interface UserMarker {
-  userId: string;
-  userLogin: string;
-  markerColor: MarkerColors;
-  region: AnimatedRegion;
-}

@@ -5,9 +5,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BackHandler } from 'react-native';
 import Map from '../screens/Map';
 import Scores from '../screens/Scores';
-import Profile from '../screens/Profile';
-import { theme } from '../other/constants';
 import Friends from '../screens/Friends';
+import Profile from '../screens/Profile';
+import { defaultIconSize, theme } from '../other/constants';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -27,7 +27,7 @@ const MenuNavigator = () => {
       } else {
         iconName = 'format-list-bulleted';
       }
-      return <MaterialCommunityIcons name={iconName} size={26} color={color} />;
+      return <MaterialCommunityIcons name={iconName} size={defaultIconSize} color={color} />;
     },
   });
 

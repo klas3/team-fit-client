@@ -59,3 +59,9 @@ export const monthNames = [
   'November',
   'December',
 ];
+
+export const loadingSpinnerSize = 70;
+
+export const parsingRadix = 10;
+
+export const defaultIconSize = 26;
