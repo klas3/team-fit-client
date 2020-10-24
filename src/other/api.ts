@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import axiosClient, { AxiosInstance } from 'axios';
 import { AsyncStorage } from 'react-native';
+import { LatLng } from 'react-native-maps';
 import { jwtStorageKeyName, serverUrl } from './constants';
 // prettier-ignore
 import {
@@ -31,11 +32,11 @@ async function makeRequest(
   }
 }
 
-function getRequest(endpoint: string): Promise<GetResponse> {
+async function getRequest(endpoint: string): Promise<GetResponse> {
   return makeRequest('GET', endpoint);
 }
 
-function postRequest(endpoint: string, data: object): Promise<PostResponse> {
+async function postRequest(endpoint: string, data: object): Promise<PostResponse> {
   return makeRequest('POST', endpoint, data);
 }
 
@@ -54,7 +55,11 @@ export async function loginToAccount(login: string, password: string): Promise<P
   return response;
 }
 
-export function register(login: string, password: string, email: string): Promise<PostResponse> {
+export async function register(
+  login: string,
+  password: string,
+  email: string,
+): Promise<PostResponse> {
   return postRequest('/auth/register', { login, password, email });
 }
 
@@ -66,7 +71,10 @@ export async function getUserInfo(): Promise<User | undefined> {
   return response.data as User;
 }
 
-export function changePassword(oldPassword: string, newPassword: string): Promise<PostResponse> {
+export async function changePassword(
+  oldPassword: string,
+  newPassword: string,
+): Promise<PostResponse> {
   return postRequest('/auth/changePassword', { oldPassword, newPassword });
 }
 
@@ -86,15 +94,15 @@ export async function getFriendships(): Promise<Friendship[] | undefined> {
   return response.data as Friendship[];
 }
 
-export function createFriendship(receiverLogin: string): Promise<PostResponse> {
+export async function createFriendship(receiverLogin: string): Promise<PostResponse> {
   return postRequest('/friendship/create', { receiverLogin });
 }
 
-export function acceptFriendship(friendshipId: string): Promise<PostResponse> {
+export async function acceptFriendship(friendshipId: string): Promise<PostResponse> {
   return postRequest('/friendship/accept', { friendshipId });
 }
 
-export function deleteFriendship(friendshipId: string): Promise<PostResponse> {
+export async function deleteFriendship(friendshipId: string): Promise<PostResponse> {
   return postRequest('/friendship/delete', { friendshipId });
 }
 
@@ -106,14 +114,36 @@ export async function getParty(): Promise<Party | undefined> {
   return response.data as Party;
 }
 
-export function joinParty(partyId: string): Promise<PostResponse> {
+export async function joinParty(partyId: string): Promise<PostResponse> {
   return postRequest('/party/join', { partyId });
 }
 
-export function leaveParty(partyId: string): Promise<PostResponse> {
+export async function leaveParty(partyId: string): Promise<PostResponse> {
   return postRequest('/party/leave', { partyId });
 }
 
-export function setMarkerColor(markerColor: MarkerColors): Promise<PostResponse> {
+export async function setMarkerColor(markerColor: MarkerColors): Promise<PostResponse> {
   return postRequest('/user/setMarkerColor', { markerColor });
+}
+
+export async function addScore(mileage: number): Promise<PostResponse> {
+  return postRequest('/user/addScore', { mileage });
+}
+
+export async function setRoute(
+  partyId: string,
+  waypoints: LatLng[],
+  startPointLatitude?: number,
+  startPointLongitude?: number,
+  endPointLatitude?: number,
+  endPointLongitude?: number,
+): Promise<PostResponse> {
+  return postRequest('/party/setRoute', {
+    partyId,
+    startPointLatitude,
+    startPointLongitude,
+    endPointLatitude,
+    endPointLongitude,
+    waypoints,
+  });
 }

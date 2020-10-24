@@ -43,7 +43,7 @@ const Friend = (props: IProps) => {
   );
 
   const sendInvite = () => {
-    partyConnection.sendInvite(friend.id, partyConnection.party.id, userInfo.login);
+    partyConnection.sendInvite(friend.id, userInfo.login);
     onAction(`You've invited ${friend.login} to your party`);
   };
 

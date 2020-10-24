@@ -4,10 +4,12 @@ import { View, StyleSheet, Image } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getUserInfo, loginToAccount, updateAxiosClient } from '../other/api';
+import { loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
 import { Alignments, Spacing, Typography } from '../styles';
 import { appLogoImage } from '../other/images';
+import userInfo from '../other/userInfo';
+import partyConnection from '../other/partyConnection';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -38,6 +40,9 @@ const Login = (props: IProps) => {
       setIsErrorOccured(true);
       return;
     }
+    await userInfo.realoadInfo();
+    partyConnection.registerConnection();
+    await partyConnection.loadParty();
     navigateToMenu();
     setLogin('');
     setPassword('');
@@ -47,12 +52,15 @@ const Login = (props: IProps) => {
   useEffect(() => {
     (async () => {
       await updateAxiosClient();
-      const userInfo = await getUserInfo();
-      setIsLoading(false);
-      if (!userInfo) {
+      await userInfo.realoadInfo();
+      if (!userInfo.id) {
+        setIsLoading(false);
         return;
       }
+      partyConnection.registerConnection();
+      await partyConnection.loadParty();
       navigateToMenu();
+      setIsLoading(false);
     })();
   }, []);
 

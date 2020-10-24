@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Modal } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { leaveParty } from '../other/api';
-import { theme } from '../other/constants';
+import { applicationEvents, theme } from '../other/constants';
 import { Party } from '../other/entities';
 import partyConnection from '../other/partyConnection';
 import ConfirmationDialog from './ConfirmationDialog';
@@ -13,28 +13,26 @@ import Header from './Header';
 import PartyMember from './PartyMember';
 
 interface IProps {
-  party: Party;
   visibility: boolean;
   onDismiss: () => void;
 }
 
-const PartyList = (props: IProps) => {
+const PartyHub = (props: IProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [dialogVisibility, setDialogVisibility] = useState(false);
+  const [users, setUsers] = useState(partyConnection.party.users);
 
   const hideDialog = () => setDialogVisibility(false);
 
   const showDialog = () => setDialogVisibility(true);
 
   const confirmLeave = async () => {
-    await leaveParty(partyConnection.party.id);
     setDialogVisibility(false);
+    await leaveParty(partyConnection.party.id);
+    await partyConnection.loadParty();
   };
 
-  // prettier-ignore
-  const {
-    party, visibility, onDismiss,
-  } = props;
+  const { visibility, onDismiss } = props;
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -42,7 +40,13 @@ const PartyList = (props: IProps) => {
     setIsRefreshing(false);
   };
 
-  const renderedUsers = party.users.map((user) => <PartyMember key={user.id} member={user} />);
+  const renderedUsers = users.map((user) => <PartyMember key={user.id} member={user} />);
+
+  useEffect(() => {
+    applicationEvents.addListener('partyChanged', (newParty: Party) => {
+      setUsers([...newParty.users]);
+    });
+  }, []);
 
   return (
     <Modal contentContainerStyle={styles.flexContainer} visible={visibility} onDismiss={onDismiss}>
@@ -78,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PartyList;
+export default PartyHub;

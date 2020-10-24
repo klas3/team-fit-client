@@ -1,9 +1,12 @@
+import { NativeEventEmitter } from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 import * as config from '../../env.json';
 
 export const { googleMapsApiKey, serverUrl } = config;
 
 export const jwtStorageKeyName = 'jwt';
+
+export const applicationEvents = new NativeEventEmitter();
 
 export const theme = {
   ...DefaultTheme,

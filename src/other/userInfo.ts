@@ -1,4 +1,5 @@
-import { getFriendships, getUserInfo } from './api';
+import { getFriendships, getUserInfo, setMarkerColor } from './api';
+import { applicationEvents } from './constants';
 import { Friendship, MarkerColors } from './entities';
 
 class UserInfo {
@@ -12,6 +13,8 @@ class UserInfo {
 
   public friendships!: Friendship[];
 
+  public partyId!: string;
+
   public async realoadInfo(): Promise<void> {
     const info = await getUserInfo();
     if (!info) {
@@ -19,12 +22,14 @@ class UserInfo {
     }
     // prettier-ignore
     const {
-      id, login, email, markerColor,
+      id, login, email, markerColor, partyId,
     } = info;
     this.id = id;
     this.login = login;
     this.email = email;
     this.markerColor = markerColor;
+    this.partyId = partyId;
+    this.emitMarkerColorChanges();
   }
 
   public async reloadFriendships(): Promise<void> {
@@ -33,6 +38,19 @@ class UserInfo {
       return;
     }
     this.friendships = loadedFriendships;
+  }
+
+  public async changeMarkerColor(markerColor: MarkerColors): Promise<void> {
+    const response = await setMarkerColor(markerColor);
+    if (response.error) {
+      return;
+    }
+    this.markerColor = markerColor;
+    this.emitMarkerColorChanges();
+  }
+
+  private emitMarkerColorChanges(): void {
+    applicationEvents.emit('markerColorChanged', this.markerColor);
   }
 }
 

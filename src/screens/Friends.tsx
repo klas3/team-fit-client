@@ -41,6 +41,7 @@ const Friends = () => {
   const showSnackbar = async (message: string) => {
     setSnackbarText(message);
     setSnackbarVisibility(true);
+    // ! Bad loading friendships
     await loadFriendships();
   };
 
@@ -75,7 +76,7 @@ const Friends = () => {
   );
 
   useEffect(() => {
-    (() => loadFriendships())();
+    (async () => loadFriendships())();
   }, []);
 
   if (isLoading) {

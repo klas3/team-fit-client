@@ -4,16 +4,24 @@ import { FAB } from 'react-native-paper';
 import { theme } from '../other/constants';
 
 interface IProps {
-  onDeleteButtonPress(): void;
+  onDeleteButtonPress: () => void;
   // eslint-disable-next-line no-unused-vars
-  setOtherFabsVisibility(visibility: boolean): void;
-  onPartyButtonnPress(): void;
+  setOtherFabsVisibility: (visibility: boolean) => void;
+  onPartyButtonPress: () => void;
+  onDistanceButtonPress: () => void;
+  isDistanceDisplaying: boolean;
 }
 
 const MapFab = (props: IProps) => {
   const [open, setOpen] = useState(false);
 
-  const { onDeleteButtonPress, setOtherFabsVisibility, onPartyButtonnPress } = props;
+  const {
+    onDeleteButtonPress,
+    setOtherFabsVisibility,
+    onPartyButtonPress,
+    onDistanceButtonPress,
+    isDistanceDisplaying,
+  } = props;
 
   const onStateChange = (state: { open: boolean }) => setOpen(state.open);
 
@@ -27,14 +35,19 @@ const MapFab = (props: IProps) => {
 
   const actions = [
     {
+      icon: 'account-multiple',
+      label: 'Party',
+      onPress: () => onPartyButtonPress(),
+    },
+    {
       icon: 'delete',
       label: 'Drop route',
       onPress: () => onDeleteButtonPress(),
     },
     {
-      icon: 'account-multiple',
-      label: 'Party',
-      onPress: () => onPartyButtonnPress(),
+      icon: 'run-fast',
+      label: isDistanceDisplaying ? 'Save score' : 'Start counting distance',
+      onPress: () => onDistanceButtonPress(),
     },
   ];
 

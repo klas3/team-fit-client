@@ -1,3 +1,5 @@
+import { AnimatedRegion } from 'react-native-maps';
+
 export interface User {
   id: string;
   login: string;
@@ -30,7 +32,7 @@ export interface Party {
   endPointLatitude?: number;
   endPointLongitude?: number;
   // eslint-disable-next-line no-use-before-define
-  waypoints?: Waypoint[];
+  waypoints: Waypoint[];
   users: User[];
 }
 
@@ -78,4 +80,16 @@ export enum MarkerColors {
   'pink',
   'brown',
   'grey',
+}
+
+export interface SnackbarAction {
+  label: string;
+  onPress: () => void;
+}
+
+export interface UserMarker {
+  userId: string;
+  userLogin: string;
+  markerColor: MarkerColors;
+  region: AnimatedRegion;
 }

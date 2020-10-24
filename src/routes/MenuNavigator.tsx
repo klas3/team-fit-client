@@ -8,7 +8,6 @@ import Scores from '../screens/Scores';
 import Profile from '../screens/Profile';
 import { theme } from '../other/constants';
 import Friends from '../screens/Friends';
-import userInfo from '../other/userInfo';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -34,7 +33,6 @@ const MenuNavigator = () => {
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    (() => userInfo.realoadInfo())();
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     };

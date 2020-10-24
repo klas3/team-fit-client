@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // prettier-ignore
 import {
   Text, StyleSheet, View, Image, Modal,
@@ -8,9 +8,8 @@ import { Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 import Header from '../components/Header';
-import LoadingSpinner from '../components/LoadingSpinner';
 import ScreenError from '../components/ScreenError';
-import { logout, setMarkerColor } from '../other/api';
+import { logout } from '../other/api';
 import { theme } from '../other/constants';
 import { MarkerColors } from '../other/entities';
 import ChangePassword from '../components/ChangePassword';
@@ -29,7 +28,6 @@ interface IProps {
 }
 
 const Profile = (props: IProps) => {
-  const [isLoading, setIsLoading] = useState(true);
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [modalVisibility, setModalVisibility] = useState(false);
   const [selectorVisibility, setSelectorVisibility] = useState(false);
@@ -37,11 +35,7 @@ const Profile = (props: IProps) => {
   const { navigation } = props;
 
   const onSelectorConfirm = async (markerColor: MarkerColors) => {
-    const response = await setMarkerColor(markerColor);
-    if (response.error) {
-      return;
-    }
-    userInfo.markerColor = markerColor;
+    await userInfo.changeMarkerColor(markerColor);
     setSelectorVisibility(false);
   };
 
@@ -54,9 +48,7 @@ const Profile = (props: IProps) => {
     await userInfo.realoadInfo();
     if (!userInfo.email) {
       setIsErrorOccured(true);
-      return;
     }
-    setIsLoading(false);
   };
 
   const openModal = () => setModalVisibility(true);
@@ -70,14 +62,7 @@ const Profile = (props: IProps) => {
 
   const userMarkerIcon = userMarkers[getMarkerColorLiteral(userInfo.markerColor)];
 
-  useEffect(() => {
-    (() => fetchUserData())();
-  }, []);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-  if (isErrorOccured || !userInfo) {
+  if (isErrorOccured || !userInfo.id) {
     return <ScreenError onRefresh={fetchUserData} />;
   }
   return (

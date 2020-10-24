@@ -72,7 +72,7 @@ const Scores = () => {
   const onClearIconPress = () => setSearchDate(undefined);
 
   useEffect(() => {
-    (() => loadScores())();
+    (async () => loadScores())();
   }, []);
 
   if (isLoading) {

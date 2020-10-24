@@ -3,40 +3,35 @@ import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 // prettier-ignore
 import MapView, {
-  AnimatedRegion, LatLng, MapEvent, Marker, MarkerAnimated,
+  LatLng, MapEvent, Marker, MarkerAnimated,
 } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
-import { Pedometer } from 'expo-sensors';
 import MapViewDirections from 'react-native-maps-directions';
-import { FAB, Snackbar } from 'react-native-paper';
+import { FAB, Snackbar, Text } from 'react-native-paper';
+import haversine from 'haversine';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import MapFab from '../components/MapFab';
 import {
+  applicationEvents,
   defaultMapLocation,
   googleMapsApiKey,
   mapDeltas,
-  markerMovingConfig,
   theme,
   watchPositionConfig,
 } from '../other/constants';
 import { Spacing } from '../styles';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Party, PartyInvite } from '../other/entities';
-import partyConnection, { eventEmitter } from '../other/partyConnection';
-import PartyList from '../components/PartyList';
-import { joinParty } from '../other/api';
+import { Party, SnackbarAction } from '../other/entities';
+import partyConnection from '../other/partyConnection';
+import PartyHub from '../components/PartyHub';
+import { addScore, joinParty, setRoute } from '../other/api';
 import userInfo from '../other/userInfo';
 import { getMarkerColorLiteral } from '../other/library';
 import { userMarkers, routeMarkers } from '../other/images';
 
-const userLocation = new AnimatedRegion({
-  ...defaultMapLocation,
-  ...mapDeltas,
-});
-
 const Map = () => {
   const [userCoordinates, setUserCoordinates] = useState(defaultMapLocation);
-  const [steps, setSteps] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [shouldDisplayDirection, setShouldDisplayDirection] = useState(false);
   const [isRouteFabVisible, setIsRouteFabVisible] = useState(false);
@@ -44,33 +39,61 @@ const Map = () => {
   const [startPoint, setStartPoint] = useState<LatLng>();
   const [endPoint, setEndPoint] = useState<LatLng>();
   const [waypoints, setWaypoints] = useState<LatLng[]>([]);
-  const [travelCoordinates, setTravelCoordinates] = useState<[number, number][]>([]);
+  const [previousCoordinates, setPreviousCoordinates] = useState<LatLng>();
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [party, setParty] = useState<Party>(partyConnection.party);
   const [snackbarText, setSnackbarText] = useState('');
-  const [invitePartyId, setInvitePartyId] = useState('');
   const [snackbarVisibility, setSnackbarVisibility] = useState(false);
   const [mapFabVisibility, setMapFabVisibility] = useState(true);
+  const [traveledDistance, setTraveledDistance] = useState(0);
+  const [isCountingDistance, setIsCountingDistance] = useState(false);
+  const [snackbarAction, setSnackbarAction] = useState<SnackbarAction>();
 
-  const userMarker = userMarkers[getMarkerColorLiteral(userInfo.markerColor)];
+  const startCountingDistance = () => setIsCountingDistance(true);
 
-  const showInvite = (invite: PartyInvite) => {
-    const { partyId, senderLogin } = invite;
-    setSnackbarText(`${senderLogin} has invited you to his party`);
-    setInvitePartyId(partyId);
+  const saveScore = async () => {
+    const fixedDistance = Number.parseFloat(traveledDistance.toFixed(2));
+    if (fixedDistance) {
+      await addScore(fixedDistance);
+      setSnackbarText(`Your score of ${fixedDistance} km has been saved`);
+    } else {
+      setSnackbarText('Your traveled distance is too small for saving');
+    }
+    setIsCountingDistance(false);
+    setTraveledDistance(0);
+    setSnackbarAction(undefined);
     setSnackbarVisibility(true);
   };
 
-  eventEmitter.addListener('newInvite', showInvite);
-  eventEmitter.addListener('partyChanged', (newParty: Party) => setParty(newParty));
+  const showInvite = (senderLogin: string) => {
+    setSnackbarText(`${senderLogin} has invited you to his party`);
+    setSnackbarAction({ label: 'join', onPress: onJoinPartyButtonPressed });
+    setSnackbarVisibility(true);
+  };
 
-  const getSnackbarAction = () => ({
-    label: 'join',
-    onPress: async () => {
-      await joinParty(invitePartyId);
-      await partyConnection.loadParty();
-    },
-  });
+  const handlePartyChanges = (newParty: Party) => {
+    const {
+      startPointLatitude,
+      startPointLongitude,
+      endPointLatitude,
+      endPointLongitude,
+    } = newParty;
+    partyConnection.resetPartyMembersMarkers();
+    if (startPointLatitude && startPointLongitude) {
+      setStartPoint({ latitude: startPointLatitude, longitude: startPointLongitude });
+    }
+    if (endPointLatitude && endPointLongitude) {
+      setEndPoint({ latitude: endPointLatitude, longitude: endPointLongitude });
+    }
+    setWaypoints(newParty.waypoints ?? []);
+    if (startPoint && endPoint) {
+      displayRoute();
+    }
+  };
+
+  const onJoinPartyButtonPressed = async () => {
+    await joinParty(partyConnection.inviteId);
+    await partyConnection.loadParty();
+  };
 
   const hidePartyList = () => {
     setModalVisibility(false);
@@ -84,7 +107,6 @@ const Map = () => {
 
   const onDismissSnackbar = () => setSnackbarVisibility(false);
 
-  // prettier-ignore
   const onMapLongPress = (event: MapEvent) => {
     setShouldDisplayDirection(false);
     if (!startPoint) {
@@ -100,7 +122,7 @@ const Map = () => {
   };
 
   const onMapMarkerPress = (event: MapEvent<{ id: string }>) => {
-    if (event.nativeEvent.id === 'userMarker' || event.nativeEvent.id === 'teammateMarker') {
+    if (event.nativeEvent.id !== 'startMarker' && event.nativeEvent.id === 'teammateMarker') {
       return;
     }
     setShouldDisplayDirection(false);
@@ -126,57 +148,87 @@ const Map = () => {
     setWaypoints([]);
   };
 
-  const onRouteFabPress = () => {
+  const onRouteFabPress = async () => {
+    await setRoute(
+      partyConnection.party.id,
+      waypoints,
+      startPoint?.latitude,
+      startPoint?.longitude,
+      endPoint?.latitude,
+      endPoint?.longitude,
+    );
+    displayRoute();
+  };
+
+  const displayRoute = () => {
     setIsRouteFabVisible(false);
     setShouldDisplayDirection(true);
   };
 
   useEffect(() => {
+    partyConnection.resetPartyMembersMarkers();
     if (Platform.OS === 'android' && !Constants.isDevice) {
       return;
     }
     (async () => {
+      // prettier-ignore
+      applicationEvents.addListener('newInvite', showInvite);
+      applicationEvents.addListener('partyChanged', handlePartyChanges);
       const { status } = await Location.requestPermissionsAsync();
       if (status !== 'granted') {
         return;
       }
       const userPosition = await Location.getCurrentPositionAsync({});
       setUserCoordinates(userPosition.coords);
-      setIsReady(true);
-      userLocation.timing({ ...userPosition.coords, ...mapDeltas, ...markerMovingConfig }).start();
       Location.watchPositionAsync(watchPositionConfig, (position) => {
         const { latitude, longitude } = position.coords;
-        setTravelCoordinates(travelCoordinates.concat([[latitude, longitude]]));
-        userLocation.timing({ ...position.coords, ...mapDeltas, ...markerMovingConfig }).start();
+        if (isCountingDistance && previousCoordinates) {
+          setTraveledDistance(
+            traveledDistance + haversine(previousCoordinates, { latitude, longitude }),
+          );
+        }
+        setPreviousCoordinates({ latitude, longitude });
+        partyConnection.moveUserMarker(userInfo.id, latitude, longitude);
+        partyConnection.emitUserLocationChanges(latitude, longitude);
       });
-      Pedometer.watchStepCount((result) => {
-        setSteps(result.steps);
-      });
-      partyConnection.registerConnection();
-      await partyConnection.loadParty();
-      setParty(partyConnection.party);
+      setIsReady(true);
     })();
   }, []);
+
+  // prettier-ignore
+  const renderedMembersMarkers = partyConnection.party
+    && partyConnection.usersRegions.map((region, index) => {
+      // prettier-ignore
+      const {
+        login, markerColor, currentLatitude, currentLongitude,
+      } = partyConnection.party.users[index];
+      if (currentLatitude === 0 && currentLongitude === 0) {
+        return <View key={login} />;
+      }
+      return (
+        <MarkerAnimated
+          key={login}
+          coordinate={region}
+          icon={userMarkers[getMarkerColorLiteral(markerColor)]}
+          title={login}
+        />
+      );
+    });
 
   if (!isReady) {
     return <LoadingSpinner />;
   }
   return (
-    <View style={styles.main}>
+    <View style={styles.flexContainer}>
       <MapView
         onMarkerPress={onMapMarkerPress}
         onLongPress={onMapLongPress}
         onPress={onMapPress}
         region={isMapInitialized ? undefined : { ...userCoordinates, ...mapDeltas }}
-        style={styles.main}
+        style={styles.flexContainer}
         onMapReady={onMapReady}
       >
-        <MarkerAnimated
-          identifier="userMarker"
-          coordinate={userLocation}
-          icon={userMarker}
-          title={`${steps}`}
-        />
+        {renderedMembersMarkers}
         {startPoint && (
           <Marker identifier="startMarker" coordinate={startPoint} icon={routeMarkers.start} />
         )}
@@ -185,8 +237,7 @@ const Map = () => {
         )}
         {waypoints.map((marker, index) => (
           <Marker
-            // TODO replace index with waypoint id
-            identifier={`${index}`}
+            identifier="waypoint"
             // eslint-disable-next-line
             key={index}
             coordinate={marker}
@@ -214,19 +265,25 @@ const Map = () => {
           onPress={onRouteFabPress}
         />
       )}
-      {party && <PartyList onDismiss={hidePartyList} visibility={modalVisibility} party={party} />}
+      <PartyHub onDismiss={hidePartyList} visibility={modalVisibility} />
       {mapFabVisibility && (
         <MapFab
           setOtherFabsVisibility={setIsRouteFabVisible}
           onDeleteButtonPress={dropMapRoute}
-          onPartyButtonnPress={showPartyList}
+          onPartyButtonPress={showPartyList}
+          isDistanceDisplaying={isCountingDistance}
+          onDistanceButtonPress={isCountingDistance ? saveScore : startCountingDistance}
         />
       )}
-      <Snackbar
-        visible={snackbarVisibility}
-        onDismiss={onDismissSnackbar}
-        action={getSnackbarAction()}
-      >
+      {isCountingDistance && (
+        <SafeAreaView style={styles.bottomBar}>
+          <View style={styles.flexContainer}>
+            <Text style={styles.bottomBarHeader}>Traveled distance</Text>
+            <Text style={styles.bottomBarContent}>{`${traveledDistance.toFixed(2)} km`}</Text>
+          </View>
+        </SafeAreaView>
+      )}
+      <Snackbar visible={snackbarVisibility} onDismiss={onDismissSnackbar} action={snackbarAction}>
         {snackbarText}
       </Snackbar>
     </View>
@@ -234,7 +291,7 @@ const Map = () => {
 };
 
 const styles = StyleSheet.create({
-  main: {
+  flexContainer: {
     flex: 1,
   },
   routeFab: {
@@ -242,6 +299,25 @@ const styles = StyleSheet.create({
     margin: Spacing.base,
     right: 0,
     bottom: 70,
+  },
+  bottomBar: {
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: 'rgba(219,219,219,0.7)',
+    padding: Spacing.large,
+    flexDirection: 'row',
+  },
+  bottomBarHeader: {
+    fontSize: 17,
+    textAlign: 'center',
+    color: theme.colors.accent,
+  },
+  bottomBarContent: {
+    fontWeight: '700',
+    fontSize: 18,
+    marginTop: Spacing.small,
+    color: theme.colors.primary,
+    textAlign: 'center',
   },
 });
 
