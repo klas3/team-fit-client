@@ -14,10 +14,15 @@ const Tab = createMaterialBottomTabNavigator();
 const MenuNavigator = () => {
   const onBackPress = () => true;
 
-  const getScreenOptions = ({ route }: { route: { name: string } }) => ({
+  const navigationBarStyle = {
+    backgroundColor: theme.colors.backgroundAccent,
+  };
+
+  const getScreenOptions = (screenInfo: { route: { name: string } }) => ({
     // eslint-disable-next-line react/prop-types
-    tabBarIcon: ({ color }: { color: string }) => {
+    tabBarIcon: (iconOptions: { color: string }) => {
       let iconName: string;
+      const { route } = screenInfo;
       if (route.name === 'Profile') {
         iconName = 'account';
       } else if (route.name === 'Map') {
@@ -27,7 +32,9 @@ const MenuNavigator = () => {
       } else {
         iconName = 'format-list-bulleted';
       }
-      return <MaterialCommunityIcons name={iconName} size={defaultIconSize} color={color} />;
+      return (
+        <MaterialCommunityIcons name={iconName} size={defaultIconSize} color={iconOptions.color} />
+      );
     },
   });
 
@@ -42,7 +49,7 @@ const MenuNavigator = () => {
     <Tab.Navigator
       activeColor={theme.colors.primary}
       inactiveColor={theme.colors.inactive}
-      barStyle={{ backgroundColor: theme.colors.backgroundAccent }}
+      barStyle={navigationBarStyle}
       screenOptions={getScreenOptions}
     >
       <Tab.Screen name="Map" component={Map} />

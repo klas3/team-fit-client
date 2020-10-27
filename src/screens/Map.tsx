@@ -17,6 +17,7 @@ import {
   defaultMapLocation,
   googleMapsApiKey,
   mapDeltas,
+  parsingRadix,
   theme,
   watchPositionConfig,
 } from '../other/constants';
@@ -86,7 +87,7 @@ const Map = () => {
       setEndPoint({ latitude: endPointLatitude, longitude: endPointLongitude });
     }
     setWaypoints(newParty.waypoints ?? []);
-    if (startPoint && endPoint) {
+    if (startPointLatitude && startPointLongitude && endPointLatitude && endPointLongitude) {
       displayRoute();
     }
   };
@@ -120,6 +121,8 @@ const Map = () => {
 
   const onMapPress = (event: MapEvent) => {
     setWaypoints([...waypoints, event.nativeEvent.coordinate]);
+    setIsRouteFabVisible(true);
+    setShouldDisplayDirection(false);
   };
 
   const onMapMarkerPress = (event: MapEvent<{ id: string }>) => {
@@ -137,7 +140,7 @@ const Map = () => {
       return;
     }
     const oldWaypoints = [...waypoints];
-    oldWaypoints.splice(Number.parseInt(event.nativeEvent.id, 10), 1);
+    oldWaypoints.splice(Number.parseInt(event.nativeEvent.id, parsingRadix), 1);
     setWaypoints([...oldWaypoints]);
   };
 
@@ -147,6 +150,11 @@ const Map = () => {
     setStartPoint(undefined);
     setEndPoint(undefined);
     setWaypoints([]);
+  };
+
+  const displayRoute = () => {
+    setIsRouteFabVisible(false);
+    setShouldDisplayDirection(true);
   };
 
   const onRouteFabPress = async () => {
@@ -159,11 +167,6 @@ const Map = () => {
       endPoint?.longitude,
     );
     displayRoute();
-  };
-
-  const displayRoute = () => {
-    setIsRouteFabVisible(false);
-    setShouldDisplayDirection(true);
   };
 
   useEffect(() => {

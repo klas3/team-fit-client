@@ -60,7 +60,7 @@ class PartyConnection {
   // eslint-disable-next-line class-methods-use-this
   private onNewInvite(invite: PartyInvite): void {
     this.inviteId = invite.partyId;
-    applicationEvents.emit('newInvite', invite);
+    applicationEvents.emit('newInvite', invite.senderLogin);
   }
 
   private emitPartyChanges(): void {

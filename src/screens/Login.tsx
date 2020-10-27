@@ -35,8 +35,8 @@ const Login = (props: IProps) => {
     }
     setIsLoading(true);
     const result = await loginToAccount(login, password);
-    setIsLoading(false);
     if (result.error) {
+      setIsLoading(false);
       setIsErrorOccured(true);
       return;
     }
@@ -47,6 +47,7 @@ const Login = (props: IProps) => {
     setLogin('');
     setPassword('');
     setIsErrorOccured(false);
+    setIsLoading(false);
   };
 
   useEffect(() => {
