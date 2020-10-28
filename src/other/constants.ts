@@ -6,6 +6,12 @@ export const { googleMapsApiKey, serverUrl } = config;
 
 export const jwtStorageKeyName = 'jwt';
 
+export const loadingSpinnerSize = 70;
+
+export const parsingRadix = 10;
+
+export const defaultIconSize = 26;
+
 export const applicationEvents = new NativeEventEmitter();
 
 export const theme = {
@@ -59,9 +65,3 @@ export const monthNames = [
   'November',
   'December',
 ];
-
-export const loadingSpinnerSize = 70;
-
-export const parsingRadix = 10;
-
-export const defaultIconSize = 26;

@@ -21,7 +21,7 @@ import {
   theme,
   watchPositionConfig,
 } from '../other/constants';
-import { Spacing } from '../styles';
+import { Sizes } from '../styles';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Party, SnackbarAction } from '../other/entities';
 import partyConnection from '../services/partyConnection';
@@ -217,6 +217,10 @@ const Map = () => {
     );
   });
 
+  const renderedWaypoints = waypoints.map((marker) => (
+    <Marker identifier="waypoint" key="waypoint" coordinate={marker} icon={routeMarkers.waypoint} />
+  ));
+
   if (!isReady) {
     return <LoadingSpinner />;
   }
@@ -231,28 +235,21 @@ const Map = () => {
         onMapReady={onMapReady}
       >
         {renderedMembersMarkers}
+        {renderedWaypoints}
         {startPoint && (
           <Marker identifier="startMarker" coordinate={startPoint} icon={routeMarkers.start} />
         )}
         {endPoint && (
           <Marker identifier="endMarker" coordinate={endPoint} icon={routeMarkers.end} />
         )}
-        {waypoints.map((marker, index) => (
-          <Marker
-            identifier="waypoint"
-            // eslint-disable-next-line
-            key={index}
-            coordinate={marker}
-            icon={routeMarkers.waypoint}
-          />
-        ))}
         {shouldDisplayDirection && (
           <MapViewDirections
+            mode="BICYCLING"
             origin={startPoint}
             destination={endPoint}
             waypoints={waypoints}
             apikey={googleMapsApiKey}
-            strokeWidth={Spacing.smallest}
+            strokeWidth={Sizes.smallest}
             strokeColor={theme.colors.primary}
           />
         )}
@@ -298,7 +295,7 @@ const styles = StyleSheet.create({
   },
   routeFab: {
     position: 'absolute',
-    margin: Spacing.base,
+    margin: Sizes.base,
     right: 0,
     bottom: 70,
   },
@@ -306,18 +303,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     backgroundColor: 'rgba(219,219,219,0.7)',
-    padding: Spacing.large,
+    padding: Sizes.large,
     flexDirection: 'row',
   },
   bottomBarHeader: {
-    fontSize: 17,
+    fontSize: Sizes.base,
     textAlign: 'center',
     color: theme.colors.accent,
   },
   bottomBarContent: {
     fontWeight: '700',
-    fontSize: 18,
-    marginTop: Spacing.small,
+    fontSize: Sizes.big,
+    marginTop: Sizes.small,
     color: theme.colors.primary,
     textAlign: 'center',
   },

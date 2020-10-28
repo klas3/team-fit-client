@@ -11,7 +11,7 @@ import ScreenError from '../components/ScreenError';
 import { createFriendship } from '../other/api';
 import { Friendship } from '../other/entities';
 import userInfo from '../services/userInfo';
-import { Spacing, Typography } from '../styles';
+import { Sizes, Typography } from '../styles';
 
 const Friends = () => {
   const [friendships, setFriendships] = useState<Friendship[]>([]);
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   textLabel: {
     ...Typography.smallInfoLabel,
-    marginTop: Spacing.small,
+    marginTop: Sizes.small,
   },
 });
 

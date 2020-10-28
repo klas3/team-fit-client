@@ -1,27 +1,27 @@
-import { Spacing } from '.';
+import { Sizes } from '.';
 import { theme } from '../other/constants';
 
 export const smallInfoLabel = {
   textAlign: 'center' as 'center',
-  fontSize: Spacing.base,
+  fontSize: Sizes.base,
 };
 
 export const largeInfoLable = {
-  fontSize: Spacing.larger,
-  marginBottom: Spacing.small,
+  fontSize: Sizes.larger,
+  marginBottom: Sizes.small,
   color: theme.colors.text,
 };
 
 export const errorText = {
   ...smallInfoLabel,
   color: theme.colors.primary,
-  marginBottom: Spacing.smallest,
+  marginBottom: Sizes.smallest,
 };
 
 export const successText = {
   ...smallInfoLabel,
   color: 'green',
-  marginBottom: Spacing.smallest,
+  marginBottom: Sizes.smallest,
 };
 
 export const infoText = {
@@ -31,6 +31,6 @@ export const infoText = {
 };
 
 export const buttonText = {
-  fontSize: Spacing.large,
+  fontSize: Sizes.large,
   textTransform: 'none' as 'none',
 };

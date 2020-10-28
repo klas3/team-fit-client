@@ -8,7 +8,7 @@ import { register } from '../other/api';
 import { theme } from '../other/constants';
 import { appLogoImage } from '../other/images';
 import { registerSchema } from '../other/validation.schemas';
-import { Alignments, Spacing, Typography } from '../styles';
+import { Alignments, Sizes, Typography } from '../styles';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -103,10 +103,13 @@ const Register = (props: IProps) => {
 const styles = StyleSheet.create({
   containter: Alignments.centerHorizontal,
   form: Alignments.centerVerticallyNarrowly,
-  buttonText: { ...Typography.buttonText, color: 'white' },
+  buttonText: {
+    color: 'white',
+    ...Typography.buttonText,
+  },
   errorText: Typography.errorText,
   actionButton: {
-    margin: Spacing.large,
+    margin: Sizes.large,
   },
 });
 

@@ -4,7 +4,7 @@ import { Avatar, Card, IconButton } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { User } from '../other/entities';
 import { deleteFriendship, acceptFriendship } from '../other/api';
-import { Spacing } from '../styles';
+import { Sizes } from '../styles';
 import { theme } from '../other/constants';
 import partyConnection from '../services/partyConnection';
 import userInfo from '../services/userInfo';
@@ -106,11 +106,11 @@ const Friend = (props: IProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    margin: Spacing.tiny,
+    margin: Sizes.tiny,
   },
   buttonsConatainer: {
     flexDirection: 'row',
-    margin: Spacing.smallest,
+    margin: Sizes.smallest,
   },
   buttonGreen: {
     borderWidth: 1,

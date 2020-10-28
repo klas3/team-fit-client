@@ -6,7 +6,7 @@ import { Button, TextInput } from 'react-native-paper';
 import { changingPasswordSchema } from '../other/validation.schemas';
 import { changePassword } from '../other/api';
 import LoadingSpinner from './LoadingSpinner';
-import { Alignments, Spacing, Typography } from '../styles';
+import { Alignments, Sizes, Typography } from '../styles';
 
 const ChangePassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,13 +70,11 @@ const ChangePassword = () => {
             {showSuccessLabel && (
               <Text style={styles.successText}>Your password has been changed!</Text>
             )}
-            {/* prettier-ignore */}
             <Text style={styles.errorText}>
               {formik.touched.newPassword
                 && (formik.errors.oldPassword
                   || formik.errors.newPassword
-                  || formik.errors.confirmedNewPassword
-                )}
+                  || formik.errors.confirmedNewPassword)}
             </Text>
             <Text style={styles.errorText}>{error}</Text>
             <View style={styles.widthContainer}>
@@ -107,10 +105,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   input: {
-    margin: Spacing.tiny,
+    margin: Sizes.tiny,
   },
   button: {
-    marginBottom: Spacing.base,
+    marginBottom: Sizes.base,
   },
 });
 

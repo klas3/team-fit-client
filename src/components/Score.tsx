@@ -3,7 +3,7 @@ import React from 'react';
 import { Avatar, Card } from 'react-native-paper';
 import { Text, StyleSheet } from 'react-native';
 import { Score as IScore } from '../other/entities';
-import { Spacing, Typography } from '../styles';
+import { Sizes, Typography } from '../styles';
 import { getTimeFromDate } from '../other/library';
 
 interface IProps {
@@ -29,10 +29,10 @@ const Score = ({ score }: IProps) => {
 const styles = StyleSheet.create({
   time: {
     ...Typography.smallInfoLabel,
-    marginRight: Spacing.smaller,
+    marginRight: Sizes.smaller,
   },
   card: {
-    margin: Spacing.tiny,
+    margin: Sizes.tiny,
   },
 });
 

@@ -15,7 +15,7 @@ import { MarkerColors } from '../other/entities';
 import ChangePassword from '../components/ChangePassword';
 // prettier-ignore
 import {
-  Alignments, Images, Spacing, Typography,
+  Alignments, Images, Sizes, Typography,
 } from '../styles';
 import { appLogoImage, userMarkers } from '../other/images';
 import MarkerColorSelector from '../components/MarkerColorSelector';
@@ -130,14 +130,14 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: theme.colors.backgroundPrimary,
-    paddingTop: Spacing.smallest,
-    paddingBottom: Spacing.smallest,
-    borderRadius: Spacing.small,
-    marginBottom: Spacing.small,
+    paddingTop: Sizes.smallest,
+    paddingBottom: Sizes.smallest,
+    borderRadius: Sizes.small,
+    marginBottom: Sizes.small,
   },
   mapMarker: {
     ...Images.marker,
-    margin: Spacing.base,
+    margin: Sizes.base,
   },
   container: {
     ...Alignments.centerHorizontal,
@@ -147,10 +147,10 @@ const styles = StyleSheet.create({
   infoText: Typography.infoText,
   buttonText: Typography.buttonText,
   button: {
-    margin: Spacing.small,
+    margin: Sizes.small,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: Sizes.base,
   },
 });
 

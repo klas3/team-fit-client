@@ -1,8 +1,8 @@
-import { Spacing } from '.';
+import { Sizes } from '.';
 
 // eslint-disable-next-line import/prefer-default-export
 export const marker = {
   resizeMode: 'stretch' as 'stretch',
-  width: Spacing.largest,
-  height: Spacing.largest,
+  width: Sizes.largest,
+  height: Sizes.largest,
 };

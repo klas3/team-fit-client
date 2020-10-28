@@ -6,7 +6,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { loginToAccount, updateAxiosClient } from '../other/api';
 import { theme } from '../other/constants';
-import { Alignments, Spacing, Typography } from '../styles';
+import { Alignments, Sizes, Typography } from '../styles';
 import { appLogoImage } from '../other/images';
 import userInfo from '../services/userInfo';
 import partyConnection from '../services/partyConnection';
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     borderColor: theme.colors.primary,
-    borderWidth: Spacing.hairline,
-    margin: Spacing.small,
+    borderWidth: Sizes.hairline,
+    margin: Sizes.small,
   },
   errorText: Typography.errorText,
   loginButton: {
-    margin: Spacing.small,
+    margin: Sizes.small,
   },
 });
 

@@ -4,7 +4,7 @@ import { Avatar, Card } from 'react-native-paper';
 import { Image, StyleSheet } from 'react-native';
 import { User } from '../other/entities';
 import { getMarkerColorLiteral } from '../other/library';
-import { Images, Spacing } from '../styles';
+import { Images, Sizes } from '../styles';
 import { userMarkers } from '../other/images';
 
 interface IProps {
@@ -34,11 +34,11 @@ const PartyMember = (props: IProps) => {
 
 const styles = StyleSheet.create({
   marker: {
-    marginRight: Spacing.smaller,
+    marginRight: Sizes.smaller,
     ...Images.marker,
   },
   card: {
-    margin: Spacing.tiny,
+    margin: Sizes.tiny,
   },
 });
 

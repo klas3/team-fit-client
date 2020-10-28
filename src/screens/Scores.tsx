@@ -13,7 +13,7 @@ import { Score as IScore } from '../other/entities';
 import { getScores } from '../other/api';
 import ScreenError from '../components/ScreenError';
 import Score from '../components/Score';
-import { Spacing, Typography } from '../styles';
+import { Sizes, Typography } from '../styles';
 import { formatDate } from '../other/library';
 
 const Scores = () => {
@@ -61,8 +61,13 @@ const Scores = () => {
     }
   };
 
-  const getClearIcon = ({ size, color }: { size: number; color: string }) => (
-    <IconButton icon="close" size={size} color={color} onPress={onClearIconPress} />
+  const getClearIcon = (iconProps: { size: number; color: string }) => (
+    <IconButton
+      icon="close"
+      size={iconProps.size}
+      color={iconProps.color}
+      onPress={onClearIconPress}
+    />
   );
 
   const onFocus = () => setShowDateTimePicker(true);
@@ -83,16 +88,16 @@ const Scores = () => {
   }
 
   const renderScores = scores.map((score, index) => {
-    const currentDateWithoutTime = new Date(score.date);
-    currentDateWithoutTime.setHours(0, 0, 0, 0);
-    const previousDateWithoutTime = new Date(scores[!index ? index : index - 1].date);
-    previousDateWithoutTime.setHours(0, 0, 0, 0);
+    const currentDate = new Date(score.date);
+    const previousDate = new Date(scores[!index ? index : index - 1].date);
+    currentDate.setHours(0, 0, 0, 0);
+    previousDate.setHours(0, 0, 0, 0);
     return (
       <View key={score.id}>
-        {(!searchDate || searchDate.getTime() === currentDateWithoutTime.getTime()) && (
+        {(!searchDate || searchDate.getTime() === currentDate.getTime()) && (
           <View>
-            {(!index || previousDateWithoutTime.getTime() !== currentDateWithoutTime.getTime()) && (
-              <Text style={styles.dateText}>{formatDate(currentDateWithoutTime)}</Text>
+            {(!index || previousDate.getTime() !== currentDate.getTime()) && (
+              <Text style={styles.dateText}>{formatDate(currentDate)}</Text>
             )}
             <Score score={score} />
           </View>
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     ...Typography.smallInfoLabel,
-    marginTop: Spacing.small,
+    marginTop: Sizes.small,
   },
 });
 
