@@ -12,7 +12,6 @@ function equalTo(ref: yup.Ref, msg: string) {
 }
 
 // prettier-ignore
-// eslint-disable-next-line
 export const registerSchema = yup.object({
   login: yup
     .string()
@@ -31,7 +30,6 @@ export const registerSchema = yup.object({
 });
 
 // prettier-ignore
-// eslint-disable-next-line
 export const changingPasswordSchema = yup.object({
   oldPassword: yup.string().required('All fields should be filled'),
   newPassword: yup
@@ -40,6 +38,18 @@ export const changingPasswordSchema = yup.object({
     .min(7, 'The minimum password length is 7')
     .test('has-letter', 'The password should contain at least 1 letter', (value) => /.*[a-zA-Z].*/.test(value as string)),
   confirmedNewPassword: equalTo(yup.ref('newPassword'), 'Passwords don\'t match').required(
+    'All fields should be filled',
+  ),
+});
+
+// prettier-ignore
+export const resetPasswordSchema = yup.object({
+  newPassword: yup
+    .string()
+    .required('Enter your new password')
+    .min(7, 'The minimum password length is 7')
+    .test('has-letter', 'The password should contain at least 1 letter', (value) => /.*[a-zA-Z].*/.test(value as string)),
+  confirmedNewPassword: equalTo(yup.ref('newPassword'), "Passwords don't match").required(
     'All fields should be filled',
   ),
 });

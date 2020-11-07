@@ -3,33 +3,35 @@ import { Formik } from 'formik';
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { changingPasswordSchema } from '../other/validation.schemas';
-import { changePassword } from '../other/api';
+import { resetPasswordSchema } from '../other/validation.schemas';
+import { resetPassword } from '../other/api';
 import LoadingSpinner from './LoadingSpinner';
 import { Alignments, Sizes, Typography } from '../styles';
+import userInfo from '../services/userInfo';
 
-const ChangePassword = () => {
+interface IProps {
+  onPasswordReset: () => void;
+}
+
+const ResetPassword = (props: IProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showSuccessLabel, setShowSuccessLabel] = useState(false);
 
   const formikInitialValues = {
-    oldPassword: '',
     newPassword: '',
     confirmedNewPassword: '',
   };
 
+  const { onPasswordReset } = props;
+
   const changeUserPassword = async (values: any) => {
-    setShowSuccessLabel(false);
     setIsLoading(true);
-    const { oldPassword, newPassword } = values;
-    const changingResult = await changePassword(oldPassword, newPassword);
+    const { email, recoveryCode } = userInfo;
+    const response = await resetPassword(email, recoveryCode, values.newPassword);
     setIsLoading(false);
-    if (changingResult.error) {
-      setError(changingResult.error);
+    if (response.error) {
       return;
     }
-    setShowSuccessLabel(true);
+    onPasswordReset();
   };
 
   if (isLoading) {
@@ -38,21 +40,13 @@ const ChangePassword = () => {
   return (
     <Formik
       initialValues={formikInitialValues}
-      validationSchema={changingPasswordSchema}
+      validationSchema={resetPasswordSchema}
       onSubmit={changeUserPassword}
     >
       {(formik) => (
         <View style={styles.flexContainer}>
           <View style={styles.inputsContainer}>
             <View style={styles.widthContainer}>
-              <TextInput
-                secureTextEntry
-                style={styles.input}
-                mode="flat"
-                label="Old password"
-                value={formik.values.oldPassword}
-                onChangeText={formik.handleChange('oldPassword')}
-              />
               <TextInput
                 secureTextEntry
                 style={styles.input}
@@ -72,19 +66,13 @@ const ChangePassword = () => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            {showSuccessLabel && (
-              <Text style={styles.successText}>Your password has been changed!</Text>
-            )}
             <Text style={styles.errorText}>
               {formik.touched.newPassword
-                && (formik.errors.oldPassword
-                  || formik.errors.newPassword
-                  || formik.errors.confirmedNewPassword)}
+                && (formik.errors.newPassword || formik.errors.confirmedNewPassword)}
             </Text>
-            <Text style={styles.errorText}>{error}</Text>
             <View style={styles.widthContainer}>
               <Button style={styles.button} mode="contained" onPress={formik.handleSubmit}>
-                <Text style={styles.buttonText}>Change password</Text>
+                <Text style={styles.buttonText}>Reset password</Text>
               </Button>
             </View>
           </View>
@@ -103,7 +91,6 @@ const styles = StyleSheet.create({
   },
   errorText: Typography.errorText,
   buttonText: Typography.buttonText,
-  successText: Typography.successText,
   inputsContainer: Alignments.centerHorizontal,
   buttonContainer: {
     ...Alignments.centerHorizontal,
@@ -118,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChangePassword;
+export default ResetPassword;

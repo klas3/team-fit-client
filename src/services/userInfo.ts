@@ -15,6 +15,8 @@ class UserInfo {
 
   public partyId!: string;
 
+  public recoveryCode!: string;
+
   public async realoadInfo(): Promise<void> {
     const info = await getUserInfo();
     if (!info) {

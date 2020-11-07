@@ -147,3 +147,19 @@ export async function setRoute(
     waypoints,
   });
 }
+
+export async function requestResetPassword(email: string): Promise<PostResponse> {
+  return postRequest('/auth/requestResetPassword', { email });
+}
+
+export async function verifyResetCode(email: string, code: string): Promise<PostResponse> {
+  return postRequest('/auth/verifyResetCode', { email, code });
+}
+
+export async function resetPassword(
+  email: string,
+  code: string,
+  newPassword: string,
+): Promise<PostResponse> {
+  return postRequest('/auth/resetPassword', { email, code, newPassword });
+}

@@ -10,6 +10,7 @@ import { Alignments, Sizes, Typography } from '../styles';
 import { appLogoImage } from '../other/images';
 import userInfo from '../services/userInfo';
 import partyConnection from '../services/partyConnection';
+import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
 
 interface IProps {
   // eslint-disable-next-line react/require-default-props
@@ -21,10 +22,20 @@ const Login = (props: IProps) => {
   const [password, setPassword] = useState('');
   const [isErrorOccured, setIsErrorOccured] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [dialogVisibility, setDialogVisibility] = useState(false);
 
   const { navigation } = props;
 
   const navigateToRegister = () => navigation.navigate('Register');
+
+  const showDialog = () => setDialogVisibility(true);
+
+  const onDialogDismiss = () => setDialogVisibility(false);
+
+  const onDialogConfirm = () => {
+    setDialogVisibility(false);
+    navigation.navigate('Password recovery');
+  };
 
   // prettier-ignore
   const navigateToMenu = () => navigation.navigate('Main', {}, NavigationActions.navigate({ routeName: 'Main' }));
@@ -73,7 +84,13 @@ const Login = (props: IProps) => {
       <View style={styles.form}>
         <Image source={appLogoImage} />
         <TextInput mode="outlined" label="Login" value={login} onChangeText={setLogin} />
-        <TextInput mode="outlined" label="Password" value={password} onChangeText={setPassword} />
+        <TextInput
+          secureTextEntry
+          mode="outlined"
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+        />
         <Text style={styles.errorText}>
           {isErrorOccured && "The credentials you've provided was incorrect"}
         </Text>
@@ -88,7 +105,15 @@ const Login = (props: IProps) => {
         <Button mode="outlined" style={styles.registerButton} onPress={navigateToRegister}>
           <Text style={styles.registerButtonText}>Register</Text>
         </Button>
+        <Button mode="text" onPress={showDialog}>
+          <Text style={styles.forgotPasswordButtonText}>Forgot password</Text>
+        </Button>
       </View>
+      <PasswordRecoveryDialog
+        visible={dialogVisibility}
+        onDismiss={onDialogDismiss}
+        onConfirm={onDialogConfirm}
+      />
     </View>
   );
 };
@@ -96,9 +121,17 @@ const Login = (props: IProps) => {
 const styles = StyleSheet.create({
   containter: Alignments.centerHorizontal,
   form: Alignments.centerVerticallyNarrowly,
-  loginButtonText: { ...Typography.buttonText, color: 'white' },
+  loginButtonText: {
+    ...Typography.buttonText,
+    color: 'white',
+  },
   registerButtonText: {
     ...Typography.buttonText,
+    color: theme.colors.primary,
+  },
+  forgotPasswordButtonText: {
+    ...Typography.buttonText,
+    fontSize: Sizes.base,
     color: theme.colors.primary,
   },
   registerButton: {
