@@ -53,25 +53,27 @@ const Register = (props: IProps) => {
           <View style={styles.form}>
             <Image source={appLogoImage} />
             <TextInput
-              mode="outlined"
+              style={styles.input}
               label="Email"
               value={formik.values.email}
               onChangeText={formik.handleChange('email')}
             />
             <TextInput
-              mode="outlined"
+              style={styles.input}
               label="Login"
               value={formik.values.login}
               onChangeText={formik.handleChange('login')}
             />
             <TextInput
-              mode="outlined"
+              secureTextEntry
+              style={styles.input}
               label="Password"
               value={formik.values.password}
               onChangeText={formik.handleChange('password')}
             />
             <TextInput
-              mode="outlined"
+              secureTextEntry
+              style={styles.input}
               label="Confirm password"
               value={formik.values.confirmedPassword}
               onChangeText={formik.handleChange('confirmedPassword')}
@@ -110,6 +112,9 @@ const styles = StyleSheet.create({
   errorText: Typography.errorText,
   actionButton: {
     margin: Sizes.large,
+  },
+  input: {
+    backgroundColor: theme.colors.background,
   },
 });
 

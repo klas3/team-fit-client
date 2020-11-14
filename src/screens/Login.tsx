@@ -83,10 +83,10 @@ const Login = (props: IProps) => {
     <View style={styles.containter}>
       <View style={styles.form}>
         <Image source={appLogoImage} />
-        <TextInput mode="outlined" label="Login" value={login} onChangeText={setLogin} />
+        <TextInput style={styles.input} label="Login" value={login} onChangeText={setLogin} />
         <TextInput
+          style={styles.input}
           secureTextEntry
-          mode="outlined"
           label="Password"
           value={password}
           onChangeText={setPassword}
@@ -142,6 +142,9 @@ const styles = StyleSheet.create({
   errorText: Typography.errorText,
   loginButton: {
     margin: Sizes.small,
+  },
+  input: {
+    backgroundColor: theme.colors.background,
   },
 });
 

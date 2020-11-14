@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "team-fit",
+    "name": "Team Fit",
     "slug": "team-fit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/app-icon.png",
     "splash": {
-      "image": "./assets/app-logo.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +18,12 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.klas.teamfit"
+      "package": "com.klas.teamfit",
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      }
     }
   }
 }

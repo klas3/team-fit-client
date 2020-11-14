@@ -6,7 +6,7 @@ export const { googleMapsApiKey, serverUrl } = config;
 
 export const jwtStorageKeyName = 'jwt';
 
-export const loadingSpinnerSize = 70;
+export const loadingSpinnerSize = 40;
 
 export const parsingRadix = 10;
 

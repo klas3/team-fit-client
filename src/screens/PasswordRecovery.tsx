@@ -5,7 +5,6 @@ import {
   View, StyleSheet, Text, Modal,
 } from 'react-native';
 import { Button, TextInput, Card } from 'react-native-paper';
-import { NavigationActions } from 'react-navigation';
 import Header from '../components/Header';
 import ResetPassword from '../components/ResetPassword';
 import { requestResetPassword, verifyResetCode } from '../other/api';

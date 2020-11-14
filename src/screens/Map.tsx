@@ -244,7 +244,6 @@ const Map = () => {
         )}
         {shouldDisplayDirection && (
           <MapViewDirections
-            mode="BICYCLING"
             origin={startPoint}
             destination={endPoint}
             waypoints={waypoints}
